@@ -6,9 +6,11 @@
  * Time: 13:00
  */
 
-namespace App\Commands;
+namespace App\Command;
 
+use App\Service\Importer;
 use Exception;
+use League\Csv\InvalidArgument;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,6 +21,10 @@ class ImportCommand extends Command {
 	
 	protected static $defaultName = 'app:csv-import';
 	protected static $defaultDescription = 'Import products from provided csv file';
+	
+	public function __construct( public Importer $service ) {
+		parent::__construct();
+	}
 	
 	protected function configure(): void {
 		$this
@@ -37,26 +43,40 @@ class ImportCommand extends Command {
 	protected function execute( InputInterface $input, OutputInterface $output ): int {
 		$output->writeln( "Start" );
 		
-		$fileName  = $input->getArgument( 'file' );
-		$delimiter = $input->getOption( 'delimiter' );
-		
-		$this->checkFile( $fileName );
-		
-		$output->writeln( "File: $fileName" );
-		
-		return Command::SUCCESS;
-	}
-	
-	/**
-	 * @throws Exception
-	 */
-	private function checkFile( string $fileName ): void {
-		if ( ! is_readable( $fileName ) ) {
-			throw new Exception( "File '$fileName' doesn't found or unavailable" );
+		try {
+			list( $skippedItems, $newItems, $updatedItems, $invalidItems ) = $this
+				->service
+				->import(
+					$input->getArgument( 'file' ),
+					$input->getOption( 'delimiter' )
+				);
+			
+			$output->writeln( "Done:" );
+			$output->writeln( "Skipped: $skippedItems" );
+			$output->writeln( "New: $newItems" );
+			$output->writeln( "Updated: $updatedItems" );
+			$output->writeln( "Invalid: $invalidItems" );
+			
+			return Command::SUCCESS;
+		} catch ( InvalidArgument $e ) {
+			$output->writeln( "Invalid delimiter specified!" );
+			
+			return Command::INVALID;
+		} catch ( \League\Csv\Exception $e ) {
+			$output->writeln( $e->getMessage() );
+		} catch ( Exception $e ) {
+			switch ( $e->getCode() ) {
+				case 1:
+				case 2:
+					$output->writeln( $e->getMessage() );
+					
+					return Command::INVALID;
+				case 3:
+					$output->writeln( $e->getMessage() );
+					break;
+			}
 		}
 		
-		if ( ! filesize( $fileName ) ) {
-			throw new Exception( "File '$fileName' is empty!" );
-		}
+		return Command::FAILURE;
 	}
 }
