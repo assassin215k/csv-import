@@ -9,10 +9,12 @@
 namespace App\Service;
 
 use Exception;
-use Iterator;
 use JetBrains\PhpStorm\ArrayShape;
+use League\Csv\CharsetConverter;
 use League\Csv\InvalidArgument;
 use League\Csv\Reader;
+use League\Csv\Statement;
+use League\Csv\TabularDataReader;
 
 class Importer {
 	
@@ -37,9 +39,9 @@ class Importer {
 	public function import( string $fileName, string $delimiter ): array {
 		$this->checkFile( $fileName );
 		
-		$iterator = $this->getData( $fileName, $delimiter );
+		$reader = $this->getData( $fileName, $delimiter );
 		
-		return $this->importData( $iterator );
+		return $this->importData( $reader );
 	}
 	
 	/**
@@ -59,8 +61,14 @@ class Importer {
 	 * @throws InvalidArgument
 	 * @throws Exception
 	 */
-	private function getData( string $fileName, string $delimiter ): Iterator {
-		$csv = Reader::createFromPath( $fileName, 'r' );
+	private function getData( string $fileName, string $delimiter ): TabularDataReader {
+		$csv = Reader::createFromPath( $fileName );
+		
+		$input_bom = $csv->getInputBOM();
+		
+		if ($input_bom === Reader::BOM_UTF16_LE || $input_bom === Reader::BOM_UTF16_BE) {
+			CharsetConverter::addTo($csv, 'utf-16', 'utf-8');
+		}
 		
 		$csv->setDelimiter( $delimiter );
 		$csv->setHeaderOffset( 0 );
@@ -68,11 +76,11 @@ class Importer {
 		$headers = $csv->getHeader();
 		self::checkHeaders( $headers );
 		
-		return $csv->getRecords( $headers );
+		return Statement::create()->process($csv, $headers);
 	}
 	
 	/**
-	 * @param Iterator $records
+	 * @param TabularDataReader $reader
 	 *
 	 * @return int[]
 	 */
@@ -82,30 +90,30 @@ class Importer {
 		'updatedItems' => "int",
 		'invalidItems' => "int"
 	] )]
-	private function importData( Iterator $records ): array {
-		$headers = $records->current();
-		$records->next();
-		
+	private function importData( TabularDataReader $reader ): array {
 		$skippedItems = 0;
 		$newItems     = 0;
 		$updatedItems = 0;
 		$invalidItems = 0;
 		
-		list( $cost, $stock ) = self::getCostIndex( $headers );
-		
-		foreach ( $records as $record ) {
-			if ( $record[ $cost ] > 1000 ) {
+		foreach ($reader->getRecords() as $key => $record) {
+			if ( $record[ self::$headers['cost'] ] > 1000 ) {
 				$skippedItems ++;
 				continue;
 			}
-			if ( $record[ $cost ] < 5 && $record[ $stock ] < 10 ) {
+			if ( $record[ self::$headers['cost'] ] < 5 && $record[ self::$headers['stock'] ] < 10 ) {
 				$skippedItems ++;
 				continue;
 			}
 			
-			//todo continue here
+			var_dump( $record );
+			//todo create entity
+			
+			if ($key % 10 == 0) {
+				//todo save to db
+			}
 		}
-		
+
 		return [
 			'skippedItems' => $skippedItems,
 			'newItems'     => $newItems,
@@ -122,11 +130,5 @@ class Importer {
 			
 			throw new Exception( "Headers didn't match!", 3 );
 		}
-	}
-	
-	private static function getCostIndex( array $headers ): array {
-		$headers = array_flip( $headers );
-		
-		return [ $headers[ self::$headers['cost'] ], $headers[ self::$headers['stock'] ] ];
 	}
 }
