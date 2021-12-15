@@ -8,6 +8,10 @@
 
 namespace App\Service;
 
+use App\Entity\Product;
+use App\Repository\ProductRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
 use League\Csv\CharsetConverter;
@@ -27,14 +31,19 @@ class Importer {
 		"disc"  => "Discontinued",
 	];
 	
+	private ObjectManager $manager;
+	
+	public function __Construct( public ProductRepository $repository, ManagerRegistry $doctrine ) {
+		$this->manager = $doctrine->getManager();
+	}
+	
 	/**
 	 * @throws Exception
 	 */
 	#[ArrayShape( [
 		'skippedItems' => "int",
-		'newItems'     => "int",
-		'updatedItems' => "int",
-		'invalidItems' => "int"
+		'successItems' => "int",
+		'invalidItems' => "int",
 	] )]
 	public function import( string $fileName, string $delimiter ): array {
 		$this->checkFile( $fileName );
@@ -66,8 +75,8 @@ class Importer {
 		
 		$input_bom = $csv->getInputBOM();
 		
-		if ($input_bom === Reader::BOM_UTF16_LE || $input_bom === Reader::BOM_UTF16_BE) {
-			CharsetConverter::addTo($csv, 'utf-16', 'utf-8');
+		if ( $input_bom === Reader::BOM_UTF16_LE || $input_bom === Reader::BOM_UTF16_BE ) {
+			CharsetConverter::addTo( $csv, 'utf-16', 'utf-8' );
 		}
 		
 		$csv->setDelimiter( $delimiter );
@@ -76,7 +85,7 @@ class Importer {
 		$headers = $csv->getHeader();
 		self::checkHeaders( $headers );
 		
-		return Statement::create()->process($csv, $headers);
+		return Statement::create()->process( $csv, $headers );
 	}
 	
 	/**
@@ -86,17 +95,20 @@ class Importer {
 	 */
 	#[ArrayShape( [
 		'skippedItems' => "int",
-		'newItems'     => "int",
-		'updatedItems' => "int",
-		'invalidItems' => "int"
+		'successItems' => "int",
+		'invalidItems' => "int",
 	] )]
 	private function importData( TabularDataReader $reader ): array {
 		$skippedItems = 0;
-		$newItems     = 0;
-		$updatedItems = 0;
+		$successItems = 0;
 		$invalidItems = 0;
 		
-		foreach ($reader->getRecords() as $key => $record) {
+		/*
+		 * Mark all record in table to be deleted, without removing from database
+		 */
+		$this->repository->removeAll();
+		
+		foreach ( $reader->getRecords() as $record ) {
 			if ( $record[ self::$headers['cost'] ] > 1000 ) {
 				$skippedItems ++;
 				continue;
@@ -106,20 +118,59 @@ class Importer {
 				continue;
 			}
 			
-			var_dump( $record );
-			//todo create entity
+			$code    = $record[ self::$headers['code'] ];
+			$product = $this
+				->repository
+				->findOneBy(
+					[
+						'code' => $code,
+					]
+				);
 			
-			if ($key % 10 == 0) {
-				//todo save to db
+			if ( ! $product ) {
+				$product = new Product();
+				$product->setCode( $code );
+			}
+			$this->fillProduct( $product, $record );
+			
+			$isValid = false;//todo validate record here
+			//if is valid, persist
+			if ( ! $isValid ) {
+				$invalidItems ++;
+				
+				continue;
+			}
+			
+			$this->manager->persist( $product );
+			try {
+				$this->manager->flush();
+			} catch ( Exception $e ) {
+				$serializedProduct = serialize( $product->getCode() );
+				
+				echo "Product with code '$code' didn't save to database:\r\n$serializedProduct\r\n";
+				
+				$invalidItems ++;
 			}
 		}
-
+		
 		return [
 			'skippedItems' => $skippedItems,
-			'newItems'     => $newItems,
-			'updatedItems' => $updatedItems,
+			'successItems' => $successItems,
 			'invalidItems' => $invalidItems,
 		];
+	}
+	
+	private function fillProduct( Product $product, array $record ): void {
+		$product->setCost( $record[ self::$headers['code'] ] );
+		$product->setName( $record[ self::$headers['name'] ] );
+		$product->setDescription( $record[ self::$headers['desc'] ] );
+		$product->setStock( $record[ self::$headers['stock'] ] );
+		
+		var_dump( $record[ self::$headers['disc'] ] );
+		if ( $record[ self::$headers['disc'] ] ) {
+			//todo check and test boolean here
+		}
+		$product->setIsDeleted( false );
 	}
 	
 	/**
