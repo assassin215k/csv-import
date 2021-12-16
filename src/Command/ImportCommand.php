@@ -44,7 +44,7 @@ class ImportCommand extends Command {
 		$output->writeln( "Start" );
 		
 		try {
-			list( $skippedItems, $newItems, $updatedItems, $invalidItems ) = $this
+			$result = $this
 				->service
 				->import(
 					$input->getArgument( 'file' ),
@@ -52,29 +52,17 @@ class ImportCommand extends Command {
 				);
 			
 			$output->writeln( "Done:" );
-			$output->writeln( "Skipped: $skippedItems" );
-			$output->writeln( "New: $newItems" );
-			$output->writeln( "Updated: $updatedItems" );
-			$output->writeln( "Invalid: $invalidItems" );
+			$output->writeln( "Skipped: ".$result['skippedItems'] );
+			$output->writeln( "Success: ".$result['successItems'] );
+			$output->writeln( "Invalid: ".$result['invalidItems'] );
 			
 			return Command::SUCCESS;
 		} catch ( InvalidArgument $e ) {
 			$output->writeln( "Invalid delimiter specified!" );
 			
 			return Command::INVALID;
-		} catch ( \League\Csv\Exception $e ) {
-			$output->writeln( $e->getMessage() );
 		} catch ( Exception $e ) {
-			switch ( $e->getCode() ) {
-				case 1:
-				case 2:
-					$output->writeln( $e->getMessage() );
-					
-					return Command::INVALID;
-				case 3:
-					$output->writeln( $e->getMessage() );
-					break;
-			}
+			$output->writeln( $e->getMessage() );
 		}
 		
 		return Command::FAILURE;

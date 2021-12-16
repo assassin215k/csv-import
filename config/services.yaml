@@ -26,3 +26,5 @@ services:
     app.parser:
         alias: App\Service\Importer
         public: true
+#        tags:
+#            - '@doctrine.orm.entity_manager'

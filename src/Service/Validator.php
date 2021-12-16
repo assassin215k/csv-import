@@ -9,33 +9,37 @@
 namespace App\Service;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Validator {
 	
+	private readonly ValidatorInterface $validator;
+	
+	public function __Construct() {
+		$this->validator = Validation::createValidator();
+	}
+	
 	public function isValidRow(array $row, ValidatorInterface $validator):bool
 	{
-		
-		
-		$emailConstraint = new Assert\Count();
+		$countConstraint = new Assert\Count();
 		// all constraint "options" can be set this way
-		$emailConstraint->message = 'Invalid email address';
+		$countConstraint->message = 'Field count is invalid';
 		
 		// use the validator to validate the value
-		$errors = $validator->validate(
+		$errors = $this->validator->validate(
 			$row,
-			[$emailConstraint]
+			[$countConstraint]
 		);
 		
-		if (!$errors->count()) {
-			// ... this IS a valid email address, do something
-		} else {
-			// this is *not* a valid email address
-			$errorMessage = $errors[0]->getMessage();
-			
-			// ... do something with the error
+		if ($errors->count()) {
+			return false;
 		}
 		
-		// ...
+		return true;
+	}
+	
+	private function isValidName(array $row) {
+	
 	}
 }

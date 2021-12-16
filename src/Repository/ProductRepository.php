@@ -51,7 +51,7 @@ class ProductRepository extends ServiceEntityRepository {
 		$this
 			->createQueryBuilder( 'p' )
 			->update()
-			->set( 'isDeleted', true )
+			->set( 'p.isDeleted', true )
 			->getQuery()
 			->execute();
 	}

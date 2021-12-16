@@ -10,8 +10,8 @@ namespace App\Service;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
 use League\Csv\CharsetConverter;
@@ -22,7 +22,7 @@ use League\Csv\TabularDataReader;
 
 class Importer {
 	
-	private static array $headers = [
+	public static array $headers = [
 		"code"  => "Product Code",
 		"name"  => "Product Name",
 		"desc"  => "Product Description",
@@ -31,10 +31,7 @@ class Importer {
 		"disc"  => "Discontinued",
 	];
 	
-	private ObjectManager $manager;
-	
-	public function __Construct( public ProductRepository $repository, ManagerRegistry $doctrine ) {
-		$this->manager = $doctrine->getManager();
+	public function __construct( private ProductRepository $repository, private EntityManagerInterface $manager ) {
 	}
 	
 	/**
@@ -133,7 +130,7 @@ class Importer {
 			}
 			$this->fillProduct( $product, $record );
 			
-			$isValid = false;//todo validate record here
+			$isValid = true;//todo validate record here
 			//if is valid, persist
 			if ( ! $isValid ) {
 				$invalidItems ++;
@@ -142,15 +139,17 @@ class Importer {
 			}
 			
 			$this->manager->persist( $product );
-			try {
-				$this->manager->flush();
-			} catch ( Exception $e ) {
-				$serializedProduct = serialize( $product->getCode() );
-				
-				echo "Product with code '$code' didn't save to database:\r\n$serializedProduct\r\n";
-				
-				$invalidItems ++;
-			}
+		}
+		try {
+			$this->manager->flush();
+		} catch ( Exception $e ) {
+			$serializedProduct = serialize( $product );
+			var_dump($e->getMessage());
+			var_dump($e->getMessage());
+			echo "Product with code '$code' didn't save to database:\r\n$serializedProduct\r\n";
+			
+			$invalidItems ++;
+			die;
 		}
 		
 		return [
@@ -161,15 +160,11 @@ class Importer {
 	}
 	
 	private function fillProduct( Product $product, array $record ): void {
-		$product->setCost( $record[ self::$headers['code'] ] );
+		$product->setCost( (float) $record[ self::$headers['code'] ] );
 		$product->setName( $record[ self::$headers['name'] ] );
 		$product->setDescription( $record[ self::$headers['desc'] ] );
-		$product->setStock( $record[ self::$headers['stock'] ] );
-		
-		var_dump( $record[ self::$headers['disc'] ] );
-		if ( $record[ self::$headers['disc'] ] ) {
-			//todo check and test boolean here
-		}
+		$product->setStock( (int) $record[ self::$headers['stock'] ] );
+		$product->setIsDiscontinued( (bool) $record[ self::$headers['disc'] ] );
 		$product->setIsDeleted( false );
 	}
 	
