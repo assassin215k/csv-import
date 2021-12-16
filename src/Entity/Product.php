@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Doctrine\ORM\Mapping\Table;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @Table(name="tblProductData", uniqueConstraints={
@@ -30,6 +31,12 @@ class Product {
 	 * @var string|null $name
 	 *
 	 * @ORM\Column(type="string", length=50, name="strProductName")
+	 *
+	 * @Assert\All({
+	 *     @Assert\Type(type="string"),
+	 *     @Assert\NotBlank(),
+	 *     @Assert\Length(max=50)
+	 * })
 	 */
 	private ?string $name;
 	
@@ -37,6 +44,12 @@ class Product {
 	 * @var string|null $description
 	 *
 	 * @ORM\Column(type="string", length=255, name="strProductDesc")
+	 *
+	 * @Assert\All({
+	 *     @Assert\Type(type="string"),
+	 *     @Assert\NotBlank(),
+	 *     @Assert\Length(max=255)
+	 * })
 	 */
 	private ?string $description;
 	
@@ -44,6 +57,12 @@ class Product {
 	 * @var string|null $code
 	 *
 	 * @ORM\Column(type="string", length=10, name="strProductCode")
+	 *
+	 * @Assert\All({
+	 *     @Assert\Type(type="string"),
+	 *     @Assert\NotBlank(),
+	 *     @Assert\Length(max=10)
+	 * })
 	 */
 	private ?string $code;
 	
@@ -52,6 +71,10 @@ class Product {
 	 *
 	 * @ORM\Column(type="boolean", name="blnDiscontinued", options={"default"=false}, columnDefinition="boolean default
 	 *                             false not null")
+	 *
+	 * @Assert\All({
+	 *     @Assert\Type(type="boolean"),
+	 * })
 	 */
 	private ?bool $isDiscontinued;
 	
@@ -59,6 +82,10 @@ class Product {
 	 * @var int|null $stock
 	 *
 	 * @ORM\Column(type="integer", name="intProductStock", options={"unsigned"=true})
+	 *
+	 * @Assert\All({
+	 *     @Assert\Positive(),
+	 * })
 	 */
 	private ?int $stock;
 	
@@ -66,6 +93,11 @@ class Product {
 	 * @var float|null $cost
 	 *
 	 * @ORM\Column(type="decimal", precision="16", scale="2", name="numProductCost", options={"unsigned"=true})
+	 *
+	 * @Assert\All({
+	 *     @Assert\Positive(),
+	 *     @Assert\Range(max="9999999999999999"),
+	 * })
 	 */
 	private ?float $cost;
 	
