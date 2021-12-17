@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 use Doctrine\ORM\Mapping\Table;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -18,7 +19,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * })
  * @ORM\Entity(repositoryClass=ProductRepository::class)
  */
-class Product {
+class Product implements ConstraintValidatorInterface{
 	
 	/**
 	 * @var int|null $id
@@ -205,5 +206,9 @@ class Product {
 			        ->atPath('stock')
 			        ->addViolation();
 		}
+	}
+	
+	public function initialize( ExecutionContextInterface $context ) {
+		// TODO: Implement initialize() method.
 	}
 }
