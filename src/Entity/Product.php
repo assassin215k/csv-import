@@ -17,10 +17,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
  */
 class Product {
 	
-	public function __construct() {
-		$this->updateAt = New \DateTime();
-	}
-	
 	/**
 	 * @var int|null $id
 	 *
@@ -29,28 +25,24 @@ class Product {
 	 * @ORM\Column(type="integer", name="intProductDataId", options={"unsigned"=true})
 	 */
 	private ?int $id;
-	
 	/**
 	 * @var string|null $name
 	 *
 	 * @ORM\Column(type="string", length=50, name="strProductName")
 	 */
 	private ?string $name;
-	
 	/**
 	 * @var string|null $description
 	 *
 	 * @ORM\Column(type="string", length=255, name="strProductDesc")
 	 */
 	private ?string $description;
-	
 	/**
 	 * @var string|null $code
 	 *
 	 * @ORM\Column(type="string", length=10, name="strProductCode")
 	 */
 	private ?string $code;
-	
 	/**
 	 * @var bool|null $isDiscontinued
 	 *
@@ -58,21 +50,18 @@ class Product {
 	 *                             false not null")
 	 */
 	private ?bool $isDiscontinued;
-	
 	/**
 	 * @var int|null $stock
 	 *
 	 * @ORM\Column(type="integer", name="intProductStock", options={"unsigned"=true})
 	 */
 	private ?int $stock;
-	
 	/**
 	 * @var float|null $cost
 	 *
 	 * @ORM\Column(type="decimal", precision="16", scale="2", name="numProductCost", options={"unsigned"=true})
 	 */
 	private ?float $cost;
-	
 	/**
 	 * @var bool|null $isDeleted
 	 *
@@ -80,7 +69,6 @@ class Product {
 	 *                             false not null")
 	 */
 	private ?bool $isDeleted;
-	
 	/**
 	 * @var DateTimeInterface|null $createdAt
 	 *
@@ -88,7 +76,6 @@ class Product {
 	 * @ORM\Column(type="datetime", name="dtmAdded", columnDefinition="timestamp default CURRENT_TIMESTAMP not null")
 	 */
 	private ?DateTimeInterface $createdAt;
-	
 	/**
 	 * @var DateTimeInterface|null $updateAt
 	 *
@@ -97,6 +84,11 @@ class Product {
 	 *                              on update CURRENT_TIMESTAMP")
 	 */
 	private ?DateTimeInterface $updateAt;
+	
+	public function __construct() {
+		$this->createdAt = new \DateTime();
+		$this->updateAt  = new \DateTime();
+	}
 	
 	public function getId(): ?int {
 		return $this->id;
@@ -194,5 +186,9 @@ class Product {
 	
 	public function getCreatedAt(): ?DateTimeInterface {
 		return $this->createdAt;
+	}
+	
+	public function isValid(): bool {
+		return $this->cost > 1000 || ( $this->cost > 5 && $this->stock < 10 );
 	}
 }

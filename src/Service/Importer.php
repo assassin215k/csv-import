@@ -9,6 +9,7 @@
 namespace App\Service;
 
 use App\Entity\Product;
+use App\Misc\CsvRow;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,16 +23,10 @@ use League\Csv\TabularDataReader;
 
 class Importer {
 	
-	public static array $headers = [
-		"code"  => "Product Code",
-		"name"  => "Product Name",
-		"desc"  => "Product Description",
-		"stock" => "Stock",
-		"cost"  => "Cost in GBP",
-		"disc"  => "Discontinued",
-	];
+	private ProductRepository $repository;
 	
-	public function __construct( private ProductRepository $repository, private EntityManagerInterface $manager ) {
+	public function __construct( private EntityManagerInterface $manager, private Validator $validator) {
+		$this->repository = $this->manager->getRepository( 'App:Product' );
 	}
 	
 	/**
@@ -106,16 +101,13 @@ class Importer {
 		$this->repository->removeAll();
 		
 		foreach ( $reader->getRecords() as $record ) {
-			if ( $record[ self::$headers['cost'] ] > 1000 ) {
-				$skippedItems ++;
-				continue;
-			}
-			if ( $record[ self::$headers['cost'] ] < 5 && $record[ self::$headers['stock'] ] < 10 ) {
-				$skippedItems ++;
+			if ( ! $this->validator->validateRow($record) ) {
+				$invalidItems ++;
+				
 				continue;
 			}
 			
-			$code    = $record[ self::$headers['code'] ];
+			$code    = $record[ CsvRow::$headers['code'] ];
 			$product = $this
 				->repository
 				->findOneBy(
@@ -126,30 +118,28 @@ class Importer {
 			
 			if ( ! $product ) {
 				$product = new Product();
-				$product->setCode( $code );
+				$product->setCode( $record[ CsvRow::$headers['code'] ] );
 			}
 			$this->fillProduct( $product, $record );
 			
-			$isValid = true;//todo validate record here
-			//if is valid, persist
-			if ( ! $isValid ) {
-				$invalidItems ++;
+//			if (!$product->isValid()) {
+//				$invalidItems ++;
+//
+//				continue;
+//			}
+			
+			try {
+				$this->manager->persist( $product );
+				$this->manager->flush();
 				
-				continue;
+				$successItems++;
+			} catch ( Exception $e ) {
+				$serializedProduct = serialize( $product );
+				
+				echo "Product with code '$code' didn't save to database:\r\n$serializedProduct\r\n" . $e->getMessage() . "\r\n";
+				
+				$invalidItems ++;
 			}
-			
-			$this->manager->persist( $product );
-		}
-		try {
-			$this->manager->flush();
-		} catch ( Exception $e ) {
-			$serializedProduct = serialize( $product );
-			var_dump($e->getMessage());
-			var_dump($e->getMessage());
-			echo "Product with code '$code' didn't save to database:\r\n$serializedProduct\r\n";
-			
-			$invalidItems ++;
-			die;
 		}
 		
 		return [
@@ -160,11 +150,11 @@ class Importer {
 	}
 	
 	private function fillProduct( Product $product, array $record ): void {
-		$product->setCost( (float) $record[ self::$headers['code'] ] );
-		$product->setName( $record[ self::$headers['name'] ] );
-		$product->setDescription( $record[ self::$headers['desc'] ] );
-		$product->setStock( (int) $record[ self::$headers['stock'] ] );
-		$product->setIsDiscontinued( (bool) $record[ self::$headers['disc'] ] );
+		$product->setCost( (float) $record[ CsvRow::$headers['cost'] ] );
+		$product->setName( $record[ CsvRow::$headers['name'] ] );
+		$product->setDescription( $record[ CsvRow::$headers['desc'] ] );
+		$product->setStock( (int) $record[ CsvRow::$headers['stock'] ] );
+		$product->setIsDiscontinued( (bool) $record[ CsvRow::$headers['disc'] ] );
 		$product->setIsDeleted( false );
 	}
 	
@@ -172,7 +162,7 @@ class Importer {
 	 * @throws Exception
 	 */
 	private static function checkHeaders( array &$headers ): void {
-		if ( count( array_diff( self::$headers, $headers ) ) ) {
+		if ( count( array_diff( CsvRow::$headers, $headers ) ) ) {
 			
 			throw new Exception( "Headers didn't match!", 3 );
 		}
