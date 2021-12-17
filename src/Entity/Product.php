@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Doctrine\ORM\Mapping\Table;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @Table(name="tblProductData", uniqueConstraints={
@@ -25,50 +28,63 @@ class Product {
 	 * @ORM\Column(type="integer", name="intProductDataId", options={"unsigned"=true})
 	 */
 	private ?int $id;
+	
 	/**
 	 * @var string|null $name
 	 *
 	 * @ORM\Column(type="string", length=50, name="strProductName")
+	 *
+	 * @Assert\NotBlank
+	 * @Assert\Length(max=50)
 	 */
 	private ?string $name;
+	
 	/**
 	 * @var string|null $description
 	 *
 	 * @ORM\Column(type="string", length=255, name="strProductDesc")
+	 *
+	 * @Assert\NotBlank
+	 * @Assert\Length(max=255)
 	 */
 	private ?string $description;
+	
 	/**
 	 * @var string|null $code
 	 *
 	 * @ORM\Column(type="string", length=10, name="strProductCode")
+	 *
+	 * @Assert\NotBlank
+	 * @Assert\Length(max=10)
 	 */
 	private ?string $code;
+	
 	/**
-	 * @var bool|null $isDiscontinued
+	 * @var DateTimeInterface|null $isDiscontinued
 	 *
-	 * @ORM\Column(type="boolean", name="blnDiscontinued", options={"default"=false}, columnDefinition="boolean default
-	 *                             false not null")
+	 * @ORM\Column(type="datetime", name="dtmDiscontinued", nullable="true")
 	 */
-	private ?bool $isDiscontinued;
+	private ?DateTimeInterface $discontinued;
+	
 	/**
 	 * @var int|null $stock
 	 *
 	 * @ORM\Column(type="integer", name="intProductStock", options={"unsigned"=true})
+	 *
+	 * @Assert\LessThanOrEqual(1000)
+	 * @Assert\GreaterThan(0)
 	 */
 	private ?int $stock;
+	
 	/**
 	 * @var float|null $cost
 	 *
 	 * @ORM\Column(type="decimal", precision="16", scale="2", name="numProductCost", options={"unsigned"=true})
+	 *
+	 * @Assert\GreaterThan(0)
 	 */
 	private ?float $cost;
-	/**
-	 * @var bool|null $isDeleted
-	 *
-	 * @ORM\Column(type="boolean", name="blnIsDeleted", options={"default"=false}, columnDefinition="boolean default
-	 *                             false not null")
-	 */
-	private ?bool $isDeleted;
+	
 	/**
 	 * @var DateTimeInterface|null $createdAt
 	 *
@@ -76,18 +92,22 @@ class Product {
 	 * @ORM\Column(type="datetime", name="dtmAdded", columnDefinition="timestamp default CURRENT_TIMESTAMP not null")
 	 */
 	private ?DateTimeInterface $createdAt;
+	
 	/**
 	 * @var DateTimeInterface|null $updateAt
 	 *
 	 * @Gedmo\Timestampable(on="update")
-	 * @ORM\Column(type="datetime", name="stmTimestamp", columnDefinition="timestamp default CURRENT_TIMESTAMP not null
-	 *                              on update CURRENT_TIMESTAMP")
+	 * @ORM\Column(type="datetime", name="stmTimestamp", columnDefinition="timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP")
 	 */
 	private ?DateTimeInterface $updateAt;
 	
 	public function __construct() {
-		$this->createdAt = new \DateTime();
-		$this->updateAt  = new \DateTime();
+		$this->createdAt = new DateTime();
+		$this->updateAt  = new DateTime();
+	}
+	
+	public function __toString(): string {
+		return $this->code ?? '';
 	}
 	
 	public function getId(): ?int {
@@ -124,22 +144,8 @@ class Product {
 		return $this;
 	}
 	
-	public function isDiscontinued(): bool {
-		return $this->isDiscontinued ?? false;
-	}
-	
-	public function setIsDiscontinued( bool $isDiscontinued ): self {
-		$this->isDiscontinued = $isDiscontinued;
-		
-		return $this;
-	}
-	
-	public function isDeleted(): bool {
-		return $this->isDeleted ?? false;
-	}
-	
-	public function setIsDeleted( bool $isDeleted ): self {
-		$this->isDeleted = $isDeleted;
+	public function setDiscontinued( bool $discontinued ): self {
+		$this->discontinued = $discontinued ? new DateTime(): null;
 		
 		return $this;
 	}
@@ -180,15 +186,24 @@ class Product {
 		return $this;
 	}
 	
-	public function getUpdateAt(): ?DateTimeInterface {
-		return $this->updateAt;
-	}
-	
-	public function getCreatedAt(): ?DateTimeInterface {
-		return $this->createdAt;
-	}
-	
-	public function isValid(): bool {
-		return $this->cost > 1000 || ( $this->cost > 5 && $this->stock < 10 );
+	/**
+	 * Validate custom rules
+	 *
+	 * @param ExecutionContextInterface $context
+	 *
+	 * @return void
+	 */
+	public function validate(ExecutionContextInterface $context)
+	{
+		if ($this->cost > 1000) {
+			$context->buildViolation('Cost is too high!')
+			        ->atPath('cost')
+			        ->addViolation();
+		}
+		if ($this->cost < 5 && $this->stock < 10) {
+			$context->buildViolation('Not enough stock of the cheap product!')
+			        ->atPath('stock')
+			        ->addViolation();
+		}
 	}
 }

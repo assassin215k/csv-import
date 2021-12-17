@@ -8,7 +8,7 @@
 
 namespace App\Command;
 
-use App\Service\Importer;
+use App\Service\ImporterService;
 use Exception;
 use League\Csv\InvalidArgument;
 use Symfony\Component\Console\Command\Command;
@@ -22,7 +22,7 @@ class ImportCommand extends Command {
 	protected static $defaultName = 'app:csv-import';
 	protected static $defaultDescription = 'Import products from provided csv file';
 	
-	public function __construct( public Importer $service ) {
+	public function __construct( public ImporterService $service ) {
 		parent::__construct();
 	}
 	

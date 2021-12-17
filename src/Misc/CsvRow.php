@@ -10,12 +10,19 @@ namespace App\Misc;
 
 class CsvRow {
 	
+	public const CODE = "Product Code";
+	public const NAME = "Product Name";
+	public const DESC = "Product Description";
+	public const STOCK = "Stock";
+	public const COST = "Cost in GBP";
+	public const DISC = "Discontinued";
+	
 	public static array $headers = [
-		"code"  => "Product Code",
-		"name"  => "Product Name",
-		"desc"  => "Product Description",
-		"stock" => "Stock",
-		"cost"  => "Cost in GBP",
-		"disc"  => "Discontinued",
+		self::CODE,
+		self::NAME,
+		self::DESC,
+		self::STOCK,
+		self::COST,
+		self::DISC,
 	];
 }

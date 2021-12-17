@@ -18,12 +18,20 @@ class ProductRepository extends ServiceEntityRepository {
 		parent::__construct( $registry, Product::class );
 	}
 	
-	public function removeAll(): void {
-		$this
-			->createQueryBuilder( 'p' )
-			->update()
-			->set( 'p.isDeleted', true )
-			->getQuery()
-			->execute();
+	/**
+	 * Remove products by filter of id
+	 *
+	 * @param array $ids
+	 *
+	 * @return void
+	 */
+	public function removeWithFilterById( array $ids ): void {
+		$qb = $this->createQueryBuilder( 'p' )->delete();
+		
+		if ( count( $ids ) ) {
+			$qb->andWhere( 'p.id not in(:ids)' )->setParameter( 'ids', $ids );
+		}
+		
+		$qb->getQuery()->execute();
 	}
 }
