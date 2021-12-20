@@ -1,0 +1,60 @@
+App\Entity\Product:
+  type: entity
+  repositoryClass: App\Repository\ProductRepository
+  table: tblProductData
+  id:
+    id:
+      column: intProductDataId
+      type: integer
+      generator:
+        strategy: AUTO
+      options:
+        unsigned: true
+  fields:
+    name:
+      type: string
+      length: 50
+      column: strProductName
+    description:
+      type: string
+      length: 255
+      column: strProductDesc
+    code:
+      type: string
+      length: 10
+      column: strProductCode
+    stock:
+      type: integer
+      column: intProductStock
+      options:
+        unsigned: true
+    cost:
+      type: decimal
+      column: numProductCost
+      options:
+        unsigned: true
+      precision: 16
+      scale: 2
+    discontinued:
+      type: datetime
+      column: dtmDiscontinued
+      nullable: true
+    createdAt:
+      type: datetime
+      column: dtmAdded
+      options:
+        default: CURRENT_TIMESTAMP
+      gedmo:
+        timestampable:
+          on: create
+    updateAt:
+      type: datetime
+      column: stmTimestamp
+      options:
+        default: CURRENT_TIMESTAMP
+      gedmo:
+        timestampable:
+          on: update]
+  uniqueConstraints:
+    strProductCode:
+      columns: [ strProductCode ]

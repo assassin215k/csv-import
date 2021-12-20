@@ -67,17 +67,19 @@ class ImporterService {
 			$this->fillProduct( $product, $record );
 			
 			
-			if ( ! $this->validator->isValidProduct($product) ) {
-				$invalidItems ++;
-				
-				continue;
-			}
+//			if ( ! $this->validator->isValidProduct($product) ) {
+//				$invalidItems ++;
+//
+//				continue;
+//			}
 			
 			try {
 				$this->manager->persist( $product );
 				$this->manager->flush();
 				
 				$successItems++;
+				
+				$productIds[] = $product->getId();
 			} catch ( Exception $e ) {
 				$serializedProduct = serialize( $product );
 				
@@ -85,8 +87,6 @@ class ImporterService {
 				
 				$invalidItems ++;
 			}
-			
-			$productIds[] = $product->getId();
 		}
 		
 		$this->repository->removeWithFilterById($productIds);
