@@ -67,11 +67,11 @@ class ImporterService {
 			$this->fillProduct( $product, $record );
 			
 			
-//			if ( ! $this->validator->isValidProduct($product) ) {
-//				$invalidItems ++;
-//
-//				continue;
-//			}
+			if ( ! $this->validator->isValidProduct($product) ) {
+				$invalidItems ++;
+
+				continue;
+			}
 			
 			try {
 				$this->manager->persist( $product );

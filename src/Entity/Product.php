@@ -4,8 +4,6 @@ namespace App\Entity;
 
 use DateTime;
 use DateTimeInterface;
-use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Product {
@@ -89,7 +87,7 @@ class Product {
 	 *
 	 * @return Product
 	 */
-	public function setStock( int $stock ): self {
+	public function setStock( int $stock ): Product {
 		$this->stock = $stock;
 		
 		return $this;
@@ -107,9 +105,13 @@ class Product {
 	 *
 	 * @return Product
 	 */
-	public function setCost( float $cost ): self {
+	public function setCost( float $cost ): Product {
 		$this->cost = $cost;
 		
 		return $this;
+	}
+	
+	public function test():bool {
+		return false;
 	}
 }

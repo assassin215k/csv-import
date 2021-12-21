@@ -23,9 +23,13 @@ class ValidatorService {
 		$this->validator = Validation::createValidator();
 	}
 	
-	public function isValidProduct( $product ): bool {
+	public function isValidProduct( Product $product ): bool {
 		$errors = $this->validator->validate( $product );
 		
+		
+		
+//		var_dump($this->validator);
+//		die;
 		var_dump((string) $errors);
 		
 		if ( count( $errors ) > 0 ) {
