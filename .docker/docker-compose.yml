@@ -1,0 +1,98 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:1.20
+    container_name: nginx
+    restart: always
+    ports:
+      - "8080:8080"
+    links:
+      - php:php
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./logs/nginx/:/var/log/nginx/
+      - /home/${USER}/www:/home/${USER}/www
+    depends_on:
+      - php
+      - redis
+      - rabbitmq
+      - postgres
+
+  postgres:
+    build: ./postgres
+    container_name: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - /home/${USER}/bak:/home/${USER}/bak:ro
+      - ./pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: pass
+
+  node:
+    image: node:14
+    container_name: node
+    restart: always
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - /home/${USER}/www:/home/${USER}/www
+      - /home/${USER}/.cache:/home/${USER}/.cache
+      - /home/${USER}/.yarn:/home/${USER}/.yarn
+      - /home/${USER}/.npm:/home/${USER}/.npm
+    tty: true
+
+  php:
+    build: ./php
+    container_name: php
+    restart: always
+    user: "1000:1000"
+#    links:
+#      - postgres:postgres
+#      - redis:redis
+#      - rabbitmq:rabbitmq
+#    ports:
+#      - '9000:9000'
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - ../:/home/admins/www
+      - /home/${USER}/.ssh:/home/${USER}/.ssh:ro
+      - ./:/home/${USER}/.docker:ro
+      - /home/${USER}/.composer:/home/${USER}/.composer
+
+  rabbitmq:
+    image: rabbitmq:3.8-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: pass
+
+  redis:
+    build: ./redis
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    ports:
+      - "3306:3306"

@@ -1,5 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 args=$@
-PGPASSWORD=Q3qzGwTJbLU97YDv
+PGPASSWORD=pass
 PGHOST=127.0.0.1
-docker exec -i postgres /bin/bash -c "pg_dump $args"
+docker exec -i postgres /bin/sh -c "pg_dump $args"

@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/sh
 args=$@
 current_pwd=$PWD
-docker exec php /bin/bash -c "cd $current_pwd && composer $args"
+docker exec php /bin/sh -c "cd $current_pwd && composer $args"

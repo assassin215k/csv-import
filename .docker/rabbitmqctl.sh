@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/bin/sh
 args=$@
-docker exec -i rabbitmq /bin/bash -c "rabbitmqctl $args"
+docker exec -i rabbitmq /bin/sh -c "rabbitmqctl $args"

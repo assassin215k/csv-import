@@ -1,0 +1,29 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    ports:
+      - "3306:3306"
+
+  php:
+    container_name: php
+    build: ./.docker/php
+#    image: php:8.1-fpm-alpine
+    restart: unless-stopped
+    user: "1001:1001"
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - /home/${USER}/:/home/${USER}/
+#      - ../:/home/${USER}/www
+#      - /home/${USER}/.ssh:/home/${USER}/.ssh:ro
+#      - ./:/home/${USER}/.docker:ro
+#      - /home/${USER}/.composer:/home/${USER}/.composer

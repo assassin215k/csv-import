@@ -17,6 +17,3 @@ App\Entity\Product:
     cost:
       - GreaterThan: 0
       - LessThanOrEqual: 1000
-  getters:
-    test:
-      - 'IsTrue': { message: 'Must be true' }

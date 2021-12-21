@@ -110,8 +110,4 @@ class Product {
 		
 		return $this;
 	}
-	
-	public function test():bool {
-		return false;
-	}
 }

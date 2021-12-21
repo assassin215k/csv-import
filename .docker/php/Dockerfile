@@ -6,8 +6,8 @@ RUN apt update \
             libfreetype6-dev \
             libjpeg62-turbo-dev \
             libpng-dev \
-    && docker-php-ext-install mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath xmlrpc gd intl opcache zip soap sockets \
-    && docker-php-ext-enable mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath xmlrpc gd intl opcache zip soap sockets
+    && docker-php-ext-install mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets \
+    && docker-php-ext-enable mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets
 
 RUN echo 'memory_limit = 512M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
 

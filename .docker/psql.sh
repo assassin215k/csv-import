@@ -1,5 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 args=$@
-PGPASSWORD=Instance@1
+PGPASSWORD=pass
 PGHOST=127.0.0.1
-docker exec -i postgres /bin/bash -c "psql $args"
+docker exec -i postgres /bin/sh -c "psql $args"
