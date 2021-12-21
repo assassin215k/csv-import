@@ -17,3 +17,5 @@ App\Entity\Product:
     cost:
       - GreaterThan: 0
       - LessThanOrEqual: 1000
+  constraints:
+    - App\Validator\ValidPrice: ~

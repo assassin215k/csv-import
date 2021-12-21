@@ -13,27 +13,23 @@ use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Validator class to validate scv row before write to DB
+ * Validator class to validate Product before write to DB
  */
 class ValidatorService {
 	
 	private readonly ValidatorInterface $validator;
 	
 	public function __Construct() {
-		$this->validator = Validation::createValidator();
+		$this->validator = Validation::createValidatorBuilder()
+		                             ->addYamlMapping( __DIR__ . '/../Validator/product.yaml' )
+		                             ->getValidator();
 	}
 	
 	public function isValidProduct( Product $product ): bool {
 		$errors = $this->validator->validate( $product );
 		
-		
-		
-//		var_dump($this->validator);
-//		die;
-		var_dump((string) $errors);
-		
-		if ( count( $errors ) > 0 ) {
-			echo "Invalid product: '$product' $errors";
+		if ( count( $errors ) ) {
+			echo "Invalid product: '$product':\r\n$errors\r\n";
 			
 			return false;
 		}

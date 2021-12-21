@@ -98,21 +98,17 @@ class ImporterService {
 		];
 	}
 	
+	/**
+	 * @param Product $product
+	 * @param array   $record
+	 *
+	 * @return void
+	 */
 	private function fillProduct( Product $product, array $record ): void {
 		$product->setCost( (float) $record[ CsvRow::COST ] );
 		$product->setName( (string)$record[ CsvRow::NAME ] );
 		$product->setDescription( (string)$record[ CsvRow::DESC ] );
 		$product->setStock( (int) $record[ CsvRow::STOCK ] );
 		$product->setDiscontinued( (bool) $record[ CsvRow::DISC ] );
-	}
-	
-	/**
-	 * @throws Exception
-	 */
-	private static function checkHeaders( array &$headers ): void {
-		if ( count( array_diff( CsvRow::$headers, $headers ) ) ) {
-			
-			throw new Exception( "Headers didn't match!", 3 );
-		}
 	}
 }

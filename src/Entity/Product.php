@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use DateTime;
 use DateTimeInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class Product {
 	
