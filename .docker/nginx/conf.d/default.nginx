@@ -1,0 +1,13 @@
+server {
+     # php/fastcgi
+    listen       80;
+    server_name  domain.com www.domain.com;
+    root         html;
+
+    location ~ \.php$ {
+        fastcgi_pass   127.0.0.1:9000;
+    }
+
+    access_log /var/log/nginx/domain.access.log main;
+    error_log /var/log/nginx/domain.error.log;
+}
