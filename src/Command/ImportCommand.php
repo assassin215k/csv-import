@@ -10,6 +10,7 @@ namespace App\Command;
 
 use App\Service\ImporterService;
 use Exception;
+use JetBrains\PhpStorm\ArrayShape;
 use League\Csv\InvalidArgument;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -22,6 +23,8 @@ class ImportCommand extends Command {
 	protected static $defaultName = 'app:csv-import';
 	protected static $defaultDescription = 'Import products from provided csv file';
 	
+	private OutputInterface $output;
+	
 	public function __construct( public ImporterService $service ) {
 		parent::__construct();
 	}
@@ -29,11 +32,13 @@ class ImportCommand extends Command {
 	protected function configure(): void {
 		$this
 			->addArgument( 'file', InputArgument::REQUIRED, 'The file name to proceed' )
-			->addOption( 'delimiter',
-			             null,
-			             InputOption::VALUE_OPTIONAL,
-			             'The delimiter in strings, by default is comma(,)',
-			             ',' )
+			->addOption(
+				'delimiter',
+				null,
+				InputOption::VALUE_OPTIONAL,
+				'The delimiter in strings, by default is comma(,)',
+				','
+			)
 			->setHelp( "This command allows you to import products from the local csv file" );
 	}
 	
@@ -41,20 +46,11 @@ class ImportCommand extends Command {
 	 * @throws Exception if file is invalid
 	 */
 	protected function execute( InputInterface $input, OutputInterface $output ): int {
+		$this->output = $output;
 		$output->writeln( "Start" );
 		
 		try {
-			$result = $this
-				->service
-				->import(
-					$input->getArgument( 'file' ),
-					$input->getOption( 'delimiter' )
-				);
-			
-			$output->writeln( "Done:" );
-			$output->writeln( "Skipped: ".$result['skippedItems'] );
-			$output->writeln( "Success: ".$result['successItems'] );
-			$output->writeln( "Invalid: ".$result['invalidItems'] );
+			$this->read( $input->getArgument( 'file' ), $input->getOption( 'delimiter' ) );
 			
 			return Command::SUCCESS;
 		} catch ( InvalidArgument $e ) {
@@ -66,5 +62,18 @@ class ImportCommand extends Command {
 		}
 		
 		return Command::FAILURE;
+	}
+	
+	/**
+	 * @throws InvalidArgument
+	 * @throws \League\Csv\Exception
+	 */
+	private function read( string $file, string $delimiter ): void {
+		$result = $this->service->import( $file, $delimiter );
+		
+		$this->output->writeln( "Done:" );
+		$this->output->writeln( "Skipped: " . $result['skippedItems'] );
+		$this->output->writeln( "Success: " . $result['successItems'] );
+		$this->output->writeln( "Invalid: " . $result['invalidItems'] );
 	}
 }

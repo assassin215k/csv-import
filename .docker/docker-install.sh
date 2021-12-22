@@ -64,6 +64,7 @@ systemctl enable containerd.service
 
 # Added alias to short usage of Docker Compose
 #echo "alias dc='docker-compose -f $DIR/docker-compose.yml'" >$DIR/.sh_aliases
+echo "alias phpunit='$DIR/../vendor/phpunit/phpunit/phpunit'" > $DIR/.sh_aliases
 
 # Uninstall Docker Compose
 rm /usr/local/bin/docker-compose
@@ -83,7 +84,6 @@ chmod +x /usr/local/bin/docker-compose
 rm -f /usr/bin/php && chmod +x $DIR/php.sh && ln -s $DIR/php.sh /usr/bin/php
 rm -f /usr/bin/composer && chmod +x $DIR/composer.sh && ln -s $DIR/composer.sh /usr/bin/composer
 rm -f /usr/local/bin/composer && ln -s $DIR/composer.sh /usr/local/bin/composer
-rm -f /usr/bin/phpunit && chmod +x $DIR/phpunit.sh && ln -s $DIR/phpunit.sh /usr/bin/phpunit
 
 # commands for npm
 #rm -f /usr/bin/yarn && chmod +x $DIR/yarn.sh && ln -s $DIR/yarn.sh /usr/bin/yarn
