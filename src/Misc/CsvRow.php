@@ -8,7 +8,7 @@
 
 namespace App\Misc;
 
-class CsvRow {
+final class CsvRow {
 	
 	public const CODE = "Product Code";
 	public const NAME = "Product Name";

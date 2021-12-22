@@ -21,10 +21,3 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
-    App\Service\Importer:
-        public: false
-    app.parser:
-        alias: App\Service\Importer
-        public: true
-#        tags:
-#            - '@doctrine.orm.entity_manager'
