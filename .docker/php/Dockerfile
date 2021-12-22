@@ -20,8 +20,4 @@ RUN echo 'suhosin.executor.include.whitelist = phar' >> /usr/local/etc/php/conf.
 # latest composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN curl -LO "https://phar.phpunit.de/phpunit-stable.phar" \
-    && chmod +x ./phpunit-stable.phar \
-    && mv ./phpunit-stable.phar /usr/bin/phpunit
-
 CMD [ "php-fpm" ]
