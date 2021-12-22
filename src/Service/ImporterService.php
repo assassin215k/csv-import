@@ -9,11 +9,15 @@
 namespace App\Service;
 
 use App\Entity\Product;
+use App\Exception\EmptyFileException;
+use App\Exception\MissedFileException;
+use App\Exception\WrongCsvHeadersException;
 use App\Misc\CsvRow;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use JetBrains\PhpStorm\ArrayShape;
+use League\Csv\Exception as CsvException;
 use League\Csv\InvalidArgument;
 
 class ImporterService {
@@ -40,7 +44,10 @@ class ImporterService {
 	 *
 	 * @return int[]
 	 * @throws InvalidArgument
-	 * @throws \League\Csv\Exception
+	 * @throws EmptyFileException
+	 * @throws MissedFileException
+	 * @throws WrongCsvHeadersException
+	 * @throws CsvException
 	 */
 	public function import( string $fileName, string $delimiter ): array {
 		$reader = $this->reader->read($fileName, $delimiter, CsvRow::$headers);

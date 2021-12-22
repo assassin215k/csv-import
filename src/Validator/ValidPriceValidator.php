@@ -9,6 +9,7 @@
 namespace App\Validator;
 
 use App\Entity\Product;
+use App\Exception\UnexpectedClassException;
 use Exception;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -22,7 +23,7 @@ class ValidPriceValidator extends ConstraintValidator {
 	public function validate( $value, Constraint $constraint ) {
 		
 		if ( ! $value instanceof Product ) {
-			throw new Exception( "Unexpected class, required " . Product::class );
+			throw new UnexpectedClassException( Product::class );
 		}
 		
 		if ( ! $constraint instanceof ValidPrice ) {

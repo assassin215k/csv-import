@@ -8,12 +8,42 @@
 
 namespace App\Tests\Validator;
 
+use App\Entity\Product;
 use App\Validator\ValidPriceValidator;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\Constraint;
 
 class ValidPriceValidatorTest extends TestCase {
 	
-	private ValidPriceValidator $object;
+	private static ?ValidPriceValidator $object;
+	
+	public static function setUpBeforeClass(): void {
+		parent::setUpBeforeClass();
+		
+		static::$object = new ValidPriceValidator();
+	}
+	
+	public static function tearDownAfterClass(): void {
+		parent::tearDownAfterClass();
+		
+		static::$object = null;
+	}
+	
+	protected function setUp(): void {
+	}
+	
+	protected function tearDown(): void {
+	}
+	
+//	public function __construct() {
+//		parent::__construct();
+//	}
+	
+	public function testWrongEntity() {
+		$product = new Product();
+//		$this->object->validate( new \DateTime(), $this->constraint );
+		//		$this->ex();
+	}
 	
 	public function testMath() {
 		$this->assertEquals( 4, 2 + 2 );
