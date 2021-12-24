@@ -91,11 +91,17 @@
     "gedmo/doctrine-extensions": {
         "version": "v3.4.0"
     },
+    "hamcrest/hamcrest-php": {
+        "version": "v2.0.1"
+    },
     "laminas/laminas-code": {
         "version": "4.5.0"
     },
     "league/csv": {
         "version": "9.7.4"
+    },
+    "mockery/mockery": {
+        "version": "1.4.4"
     },
     "myclabs/deep-copy": {
         "version": "1.10.2"
