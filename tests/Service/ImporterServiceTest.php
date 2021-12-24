@@ -9,6 +9,7 @@
 namespace App\Tests\Service;
 
 use App\Entity\Product;
+use App\Exception\MissedFileException;
 use App\Repository\ProductRepository;
 use App\Service\CsvReaderService;
 use App\Service\ImporterService;
@@ -16,6 +17,8 @@ use App\Service\ValidatorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\LegacyMockInterface;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 
 class ImporterServiceTest extends MockeryTestCase {
@@ -40,51 +43,42 @@ class ImporterServiceTest extends MockeryTestCase {
 	}
 	
 	public function setUp(): void {
-		$repository = Mockery::mock();
-		$repository->shouldReceive('removeWithFilterById')
-			->once();
-
-		$this->manager = $this
-			->getMockBuilder( EntityManagerInterface::class )
-			->addMethods( [ 'getRepository', 'persist', 'flush' ] )
-			->getMock();
-		
-		$this
-			->manager
-			->expects($this->once())
-			->method('getRepository')
-			->with('App:Product')
-			->willReturn($repository);
-		
-		$this
-			->manager
-			->expects($this->atLeastOnce())
-			->method('persist')
-			->willReturn(new Product());
-		
-		$this
-			->manager
-			->expects($this->atLeastOnce())
-			->method('flush')
-			->willReturn(null);
-		
-		$this->service = new ImporterService( static::$reader, static::$validator, $this->manager );
+//		$repository = Mockery::mock(ProductRepository::class);
+//		$repository->shouldReceive('removeWithFilterById')
+//		           ->once();
+//
+//		$this->manager = Mockery::mock(EntityManagerInterface::class);
+//		$this->manager->shouldReceive('getRepository')
+//		              ->once()->with('App:Product')->andReturn($repository);
+//
+//		$this->manager->shouldReceive('persist')
+//		              ->atLeast();
+//		$this->manager->shouldReceive('flush')
+//		              ->atLeast();
+//
+//		$this->service = new ImporterService( static::$reader, static::$validator, $this->manager );
 	}
 	
 	public function tearDown(): void {
 		unset( $this->manager );
 		unset( $this->service );
 	}
-	
+
 	public function testImportWrongPath() {
-	
+		$manager = Mockery::mock(EntityManagerInterface::class);
+		
+		$this->service = new ImporterService( static::$reader, static::$validator, $manager );
+		
+		$this->expectException(MissedFileException::class);
+		
+		$this->service->import('/.info/stock.csv', ',');
 	}
-	
-	public function testImportEmptyFile() {
-	
-	}
-	
-	public function testImportWrongDelimiter() {
-	
-	}
+//
+//	public function testImportEmptyFile() {
+//
+//	}
+//
+//	public function testImportWrongDelimiter() {
+//
+//	}
 }
