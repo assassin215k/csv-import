@@ -14,9 +14,11 @@ use App\Service\CsvReaderService;
 use App\Service\ImporterService;
 use App\Service\ValidatorService;
 use Doctrine\ORM\EntityManagerInterface;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\TestCase;
 
-class ImporterServiceTest extends TestCase {
+class ImporterServiceTest extends MockeryTestCase {
 	
 	private static ?CsvReaderService $reader;
 	private static ?ValidatorService $validator;
@@ -38,17 +40,10 @@ class ImporterServiceTest extends TestCase {
 	}
 	
 	public function setUp(): void {
-		$repository = $this
-			->getMockBuilder( ProductRepository::class )
-			->addMethods( [ 'removeWithFilterById' ] )
-			->getMock();
-		
-		$repository
-			->expects( $this->once() )
-			->method( 'removeWithFilterById' )
-			->with( [] )
-			->willReturn( null );
-		
+		$repository = Mockery::mock();
+		$repository->shouldReceive('removeWithFilterById')
+			->once();
+
 		$this->manager = $this
 			->getMockBuilder( EntityManagerInterface::class )
 			->addMethods( [ 'getRepository', 'persist', 'flush' ] )
