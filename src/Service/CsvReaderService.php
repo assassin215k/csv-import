@@ -37,6 +37,12 @@ class CsvReaderService {
 	 * @throws WrongCsvHeadersException
 	 */
 	public function read( string $fileName, string $delimiter, array $targetHeaders ): TabularDataReader {
+		var_dump($fileName,
+$delimiter,
+$targetHeaders);
+		die;
+		
+		
 		self::checkFile( $fileName );
 		
 		$csv = Reader::createFromPath( $fileName );

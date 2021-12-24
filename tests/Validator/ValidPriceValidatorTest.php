@@ -9,25 +9,80 @@
 namespace App\Tests\Validator;
 
 use App\Entity\Product;
+use App\Exception\UnexpectedClassException;
+use App\Validator\ValidPrice;
 use App\Validator\ValidPriceValidator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraint;
 
 class ValidPriceValidatorTest extends TestCase {
 	
-	private static ?ValidPriceValidator $object;
+	private static ?ValidPriceValidator $validator;
+	private static ?ValidPrice $constraint;
 	
 	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 		
-		static::$object = new ValidPriceValidator();
+		static::$validator  = new ValidPriceValidator();
+		static::$constraint = new ValidPrice();
 	}
 	
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		
-		static::$object = null;
+		static::$validator  = null;
+		static::$constraint = null;
 	}
+	
+	public function testWrongEntityClass() {
+		$context = $this->getMockExecutionContext();
+		$context->expects( $this->once() )
+		        ->method( 'buildViolation' )
+		        ->with( static::$constraint->message )
+		        ->willReturn( $this->getMockConstraintViolationBuilder() );
+		
+		static::$validator->initialize( $context );
+		
+		$this->expectException( UnexpectedClassException::class );
+		
+		static::$validator->validate( new \DateTime(), static::$constraint );
+	}
+	
+	public function testWrongEntityString() {
+		$context = $this->getMockExecutionContext();
+		$context->expects( $this->once() )
+		        ->method( 'buildViolation' )
+		        ->with( static::$constraint->message )
+		        ->willReturn( $this->getMockConstraintViolationBuilder() );
+		
+		static::$validator->initialize( $context );
+		
+		$this->expectException( UnexpectedClassException::class );
+		
+		static::$validator->validate( "text", static::$constraint );
+	}
+	
+	public function testWrongEntityArray() {
+		$context = $this->getMockExecutionContext();
+		$context->expects( $this->once() )
+		        ->method( 'buildViolation' )
+		        ->with( static::$constraint->message )
+		        ->willReturn( $this->getMockConstraintViolationBuilder() );
+		
+		static::$validator->initialize( $context );
+		
+		$this->expectException( UnexpectedClassException::class );
+		
+		static::$validator->validate( [], static::$constraint );
+	}
+	
+	public function testInvalidItems( $text ) {
+	}
+	
+	//	public function __construct() {
+	//		parent::__construct();
+	//	}
 	
 	protected function setUp(): void {
 	}
@@ -35,89 +90,30 @@ class ValidPriceValidatorTest extends TestCase {
 	protected function tearDown(): void {
 	}
 	
-//	public function __construct() {
-//		parent::__construct();
-//	}
-	
-	public function testWrongEntity() {
-		$product = new Product();
-//		$this->object->validate( new \DateTime(), $this->constraint );
-		//		$this->ex();
+	/**
+	 * @return MockObject
+	 */
+	private function getMockExecutionContext(): MockObject {
+		return $this
+			->getMockBuilder( 'Symfony\Component\Validator\ExecutionContext' )
+			->disableOriginalConstructor()
+			->addMethods( [ 'buildViolation' ] )
+			->getMock();
 	}
 	
-	public function testMath() {
-		$this->assertEquals( 4, 2 + 2 );
+	/**
+	 * @return MockObject
+	 */
+	private function getMockConstraintViolationBuilder(): MockObject {
+		$constraintViolationBuilder = $this
+			->getMockBuilder( 'Symfony\Component\Validator\Violation\ConstraintViolationBuilder' )
+			->disableOriginalConstructor()
+			->getMock();
+		
+		$constraintViolationBuilder->method( 'setParameter' )->willReturn( $constraintViolationBuilder );
+		
+		$constraintViolationBuilder->method( 'addViolation' );
+		
+		return $constraintViolationBuilder;
 	}
-	
-	//	public function __construct() {
-	//		parent::__construct();
-	//
-	//		$this->object = new ValidPriceValidator();
-	//	}
-	
-	//	public function testValidate() {
-	//		$test = 'username';
-	//
-	//		$this->assertSame( $test, $this->object->validateUsername( $test ) );
-	//	}
-	//
-	//	public function testValidateUsernameEmpty() {
-	//		$this->expectException( 'Exception' );
-	//		$this->expectExceptionMessage( 'The username can not be empty.' );
-	//		$this->object->validateUsername( null );
-	//	}
-	//
-	//	public function testValidateUsernameInvalid() {
-	//		$this->expectException( 'Exception' );
-	//		$this->expectExceptionMessage( 'The username must contain only lowercase latin characters and underscores.' );
-	//		$this->object->validateUsername( 'INVALID' );
-	//	}
-	//
-	//	public function testValidatePassword() {
-	//		$test = 'password';
-	//
-	//		$this->assertSame( $test, $this->object->validatePassword( $test ) );
-	//	}
-	//
-	//	public function testValidatePasswordEmpty() {
-	//		$this->expectException( 'Exception' );
-	//		$this->expectExceptionMessage( 'The password can not be empty.' );
-	//		$this->object->validatePassword( null );
-	//	}
-	//
-	//	public function testValidatePasswordInvalid() {
-	//		$this->expectException( 'Exception' );
-	//		$this->expectExceptionMessage( 'The password must be at least 6 characters long.' );
-	//		$this->object->validatePassword( '12345' );
-	//	}
-	//
-	//	public function testValidateEmail() {
-	//		$test = '@';
-	//
-	//		$this->assertSame( $test, $this->object->validateEmail( $test ) );
-	//	}
-	//
-	//	public function testValidateEmailEmpty() {
-	//		$this->expectException( 'Exception' );
-	//		$this->expectExceptionMessage( 'The email can not be empty.' );
-	//		$this->object->validateEmail( null );
-	//	}
-	//
-	//	public function testValidateEmailInvalid() {
-	//		$this->expectException( 'Exception' );
-	//		$this->expectExceptionMessage( 'The email should look like a real email.' );
-	//		$this->object->validateEmail( 'invalid' );
-	//	}
-	//
-	//	public function testValidateFullName() {
-	//		$test = 'Full Name';
-	//
-	//		$this->assertSame( $test, $this->object->validateFullName( $test ) );
-	//	}
-	//
-	//	public function testValidateFullNameEmpty() {
-	//		$this->expectException( 'Exception' );
-	//		$this->expectExceptionMessage( 'The full name can not be empty.' );
-	//		$this->object->validateFullName( null );
-	//	}
 }
