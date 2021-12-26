@@ -42,6 +42,8 @@ function aliases() {
   if ! grep -q ". ~/.docker_aliases" /home/$USER/.bashrc; then
     if [ ! -f /home/$USER/.docker_aliases ]; then
       touch /home/$USER/.docker_aliases
+
+      chown $USER:$USER /home/$USER/.docker_aliases
     fi
 
     echo "
