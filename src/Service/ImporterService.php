@@ -111,4 +111,5 @@ class ImporterService {
 		$product->setStock( (int) $record[ CsvRow::STOCK ] );
 		$product->setDiscontinued( (bool) $record[ CsvRow::DISC ] );
 	}
+	
 }
