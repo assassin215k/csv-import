@@ -2,7 +2,7 @@
 
 1. Open terminal and go to project directory
 2. run ```chmod +x .docker/docker-install.sh``` to make file executable
-3. and run ```.docker/docker-install.sh``` to install docker, build containers and link commands to containers
+3. and run ```sudo .docker/docker-install.sh``` to install docker, build containers and link commands to containers
 
 ### Attention!
 Old docker and containers will be removed 

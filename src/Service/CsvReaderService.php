@@ -26,12 +26,13 @@ class CsvReaderService {
 	 * @param array  $targetHeaders
 	 *
 	 * @return TabularDataReader
+	 *
 	 * @throws InvalidArgument
 	 * @throws \League\Csv\Exception
 	 * @throws Exception
 	 */
 	public function read( string $fileName, string $delimiter, array $targetHeaders ): TabularDataReader {
-		self::checkFile($fileName);
+		self::checkFile( $fileName );
 		
 		$csv = Reader::createFromPath( $fileName );
 		
@@ -45,7 +46,7 @@ class CsvReaderService {
 		$csv->setHeaderOffset( 0 );
 		
 		$headers = $csv->getHeader();
-
+		
 		if ( count( array_diff( $targetHeaders, $headers ) ) ) {
 			throw new Exception( "Headers didn't match!", 3 );
 		}
