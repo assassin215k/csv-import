@@ -11,12 +11,10 @@ namespace App\Validator;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * Constraint for price
+ * CustomConstraint
  */
-class ValidPrice extends Constraint
+class CustomConstraint extends Constraint
 {
-
-    public string $message = 'If the product cost less then 5 that store must be more then 10';
 
     /**
      * @return string

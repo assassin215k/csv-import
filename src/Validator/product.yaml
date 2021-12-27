@@ -18,4 +18,4 @@ App\Entity\Product:
       - GreaterThan: 0
       - LessThanOrEqual: 1000
   constraints:
-    - App\Validator\ValidPrice: ~
+    - App\Validator\CustomConstraint: ~

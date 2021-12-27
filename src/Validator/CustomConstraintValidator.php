@@ -8,6 +8,7 @@
 
 namespace App\Validator;
 
+use App\Entity\CustomConstraintInterface;
 use App\Entity\Product;
 use App\Exception\UnexpectedClassException;
 use Exception;
@@ -18,7 +19,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 /**
  * Custom validator
  */
-class ValidPriceValidator extends ConstraintValidator
+class CustomConstraintValidator extends ConstraintValidator
 {
 
     /**
@@ -30,16 +31,16 @@ class ValidPriceValidator extends ConstraintValidator
     public function validate(mixed $value, Constraint $constraint)
     {
 
-        if (!$value instanceof Product) {
-            throw new UnexpectedClassException(Product::class);
+        if (!$value instanceof CustomConstraintInterface) {
+            throw new UnexpectedClassException(CustomConstraintInterface::class);
         }
 
-        if (!$constraint instanceof ValidPrice) {
-            throw new UnexpectedTypeException($constraint, ValidPrice::class);
+        if (!$constraint instanceof CustomConstraint) {
+            throw new UnexpectedTypeException($constraint, CustomConstraint::class);
         }
 
-        if ($value->getCost() < 5 && $value->getStock() < 10) {
-            $this->context->buildViolation($constraint->message)->addViolation();
+        if ($value->isInvalid()) {
+            $this->context->buildViolation($value->getInvalidMessage())->addViolation();
         }
     }
 }

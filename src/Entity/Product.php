@@ -8,12 +8,17 @@ namespace App\Entity;
 
 use DateTime;
 use DateTimeInterface;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Product entity to import
  */
-class Product
+class Product implements CustomConstraintInterface
 {
+    /**
+     * @var string The message to use in validation error
+     */
+    private static string $invalidMessage = 'If the product cost less then 5 that store must be more then 10';
 
     private ?int $id;
 
@@ -168,5 +173,22 @@ class Product
         $this->cost = $cost;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    #[Pure]
+    public function isInvalid(): bool
+    {
+        return $this->getCost() < 5 && $this->getStock() < 10;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInvalidMessage(): string
+    {
+        return self::$invalidMessage;
     }
 }
