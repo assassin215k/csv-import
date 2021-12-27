@@ -62,8 +62,7 @@
         "post-update-cmd": [
             "@auto-scripts",
             "PHPCodeChecker\\Installer::postInstall"
-        ],
-        "phpcs-symfony": "php vendor/squizlabs/php_codesniffer/bin/phpcs --config-set installed_paths vendor/escapestudios/symfony2-coding-standard"
+        ]
     },
     "conflict": {
         "symfony/symfony": "*"
