@@ -7,7 +7,7 @@ RUN apt update \
             libjpeg62-turbo-dev \
             libpng-dev \
             git \
-    && docker-php-ext-install mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets \
+    && docker-php-ext-install mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets\
     && docker-php-ext-enable mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets
 
 RUN echo 'memory_limit=-1' >> /usr/local/etc/php/conf.d/docker-php-memory_limit.ini;
