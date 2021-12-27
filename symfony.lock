@@ -1,4 +1,7 @@
 {
+    "assassin215k/phpcs-pre-commit-hook": {
+        "version": "1.0"
+    },
     "behat/transliterator": {
         "version": "v1.3.0"
     },
@@ -285,8 +288,5 @@
     },
     "symfony/yaml": {
         "version": "v5.4.0"
-    },
-    "wickedreports/phpcs-pre-commit-hook": {
-        "version": "0.8"
     }
 }

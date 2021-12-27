@@ -20,7 +20,7 @@
         "symfony/proxy-manager-bridge": "6.0.*",
         "symfony/runtime": "6.0.*",
         "symfony/validator": "6.0.*",
-        "symfony/yaml": "6.0.*",
+        "symfony/yaml": "6.0.*"
     },
     "config": {
         "allow-plugins": {
@@ -55,16 +55,13 @@
         },
         "post-install-cmd": [
             "@auto-scripts",
-            "PHPCodeChecker\\Installer::postInstall",
-            "@phpcs-symfony"
+            "PHPCodeChecker\\Installer::postInstall"
         ],
         "post-update-cmd": [
             "@auto-scripts",
-            "PHPCodeChecker\\Installer::postInstall",
-            "@phpcs-symfony"
+            "PHPCodeChecker\\Installer::postInstall"
         ],
-        "phpcs-symfony": "php vendor/squizlabs/php_codesniffer/bin/phpcs --config-set installed_paths vendor/escapestudios/symfony2-coding-standard",
-        "phpcs": "php vendor/squizlabs/php_codesniffer/bin/phpcs --standard=Symfony"
+        "phpcs-symfony": "php vendor/squizlabs/php_codesniffer/bin/phpcs --config-set installed_paths vendor/escapestudios/symfony2-coding-standard"
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -77,7 +74,7 @@
     },
     "require-dev": {
         "escapestudios/symfony2-coding-standard": "3.x-dev",
-        "squizlabs/php_codesniffer": "3.5.8",
+        "squizlabs/php_codesniffer": "^3.6",
         "symfony/maker-bundle": "^1.36",
         "assassin215k/phpcs-pre-commit-hook":  "1.0"
     },

@@ -17,6 +17,12 @@ check php by run ```php -v``` and composer by run ```composer --version```
 2. Run migrations by ```php bin/console doctrine:migrations:migrate```
 3. in console run command php bin/console app:csv-import ./.info/stock.csv
 
+### Code standard
+To use Symfony standard import ```.editconfig``` in ```File -> Settings -> Editor -> Code Style -> PHP```
+
+### Run import command
+To run import use ```php bin/console app:csv-import ./.info/stock.csv``` command
+where ```./.info/stock.csv``` is the path to your csv file
 
 ============
 

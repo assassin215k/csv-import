@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Created by PhpStorm.
  * Author: Ihor Fedan
