@@ -17,16 +17,20 @@ use Exception;
 use JetBrains\PhpStorm\ArrayShape;
 use League\Csv\InvalidArgument;
 
+/**
+ * ImporterService to read csv and import to DB
+ */
 class ImporterService
 {
 
     private ProductRepository $repository;
 
-    public function __construct(
-        private CsvReaderService       $reader,
-        private ValidatorService       $validator,
-        private EntityManagerInterface $manager,
-    )
+    /**
+     * @param CsvReaderService       $reader
+     * @param ValidatorService       $validator
+     * @param EntityManagerInterface $manager
+     */
+    public function __construct(private CsvReaderService $reader, private ValidatorService $validator, private EntityManagerInterface $manager)
     {
         $this->repository = $this->manager->getRepository('App:Product');
     }
