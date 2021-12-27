@@ -9,12 +9,22 @@
 namespace App\Exception;
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 
-class MissedFileException extends Exception {
-	
-	protected $message = "File '{fileName}' doesn't found or unavailable!";
-	
-	public function __construct( string $fileName ) {
-		parent::__construct( str_replace( '{fileName}', $fileName, $this->message ) );
-	}
+/**
+ * MissedFileException
+ */
+class MissedFileException extends Exception
+{
+
+    protected $message = "File '%s' doesn't found or unavailable!";
+
+    /**
+     * @param string $fileName
+     */
+    #[Pure]
+    public function __construct(string $fileName)
+    {
+        parent::__construct(empty($fileName) ?: sprintf($this->message, $fileName));
+    }
 }

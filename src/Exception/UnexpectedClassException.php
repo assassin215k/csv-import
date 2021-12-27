@@ -11,12 +11,20 @@ namespace App\Exception;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 
-class UnexpectedClassException extends Exception {
-	
-	protected $message = "Unexpected class, required {className}";
-	
-	#[Pure]
-	public function __construct( string $className ) {
-		parent::__construct( str_replace( '{className}', $className, $this->message ) );
-	}
+/**
+ * UnexpectedClassException
+ */
+class UnexpectedClassException extends Exception
+{
+
+    protected $message = "Unexpected class, required %s";
+
+    /**
+     * @param string $className
+     */
+    #[Pure]
+    public function __construct(string $className)
+    {
+        parent::__construct(sprintf($this->message, $className));
+    }
 }

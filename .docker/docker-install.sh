@@ -8,6 +8,59 @@ fi
 USER="${SUDO_USER:-$USER}"
 DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
+# clear and write aliases
+function writeAliases() {
+  echo "" >/home/$USER/.docker_aliases
+#  echo alias psql="${DIR}/psql.sh" >> /home/$USER/.docker_aliases
+#  echo alias pg_dump="${DIR}/pg_dump.sh" >> /home/$USER/.docker_aliases
+#  echo alias pg_restore="${DIR}/pg_restore.sh" >> /home/$USER/.docker_aliases
+
+  echo alias php="${DIR}/php.sh" >> /home/$USER/.docker_aliases
+  echo alias composer="${DIR}/composer.sh" >> /home/$USER/.docker_aliases
+#  echo alias phpcs="${DIR}/phpcs.sh" >> /home/$USER/.docker_aliases
+#  echo alias phpcbf="${DIR}/phpcbf.sh" >> /home/$USER/.docker_aliases
+
+#  echo alias node="${DIR}/node.sh" >> /home/$USER/.docker_aliases
+#  echo alias yarn="${DIR}/yarn.sh" >> /home/$USER/.docker_aliases
+#  echo alias npm="${DIR}/npm.sh" >> /home/$USER/.docker_aliases
+
+#  echo alias nginx="${DIR}/nginx.sh" >> /home/$USER/.docker_aliases
+
+#  echo alias rabbitmqctl="${DIR}/rabbitmqctl.sh" >> /home/$USER/.docker_aliases
+
+  echo "Written aliases"
+}
+
+function makeExecutable() {
+  find $DIR -name "*.sh" -exec chmod +x {} \;
+
+  echo "sh scripts made executable"
+}
+
+# attach .docker_aliases
+function aliases() {
+  if ! grep -q ". ~/.docker_aliases" /home/$USER/.bashrc; then
+    if [ ! -f /home/$USER/.docker_aliases ]; then
+      touch /home/$USER/.docker_aliases
+
+      chown $USER:$USER /home/$USER/.docker_aliases
+    fi
+
+    echo "
+if [ -f ~/.docker_aliases ]; then
+    . ~/.docker_aliases
+fi
+" >>/home/$USER/.bashrc
+
+  fi
+  writeAliases
+}
+
+aliases
+
+makeExecutable
+
+
 # Uninstall old versions
 apt-get remove docker docker-engine docker.io containerd runc
 
@@ -19,14 +72,6 @@ apt-get -y install \
   curl \
   gnupg \
   lsb-release vim
-
-## Add Docker’s official GPG key
-#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --batch --yes --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-#
-## Set up the stable repository
-#echo \
-#  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-#  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list >/dev/null
 
 # install the latest version of Docker Engine and containerd
 apt-get update && apt-get install docker-ce docker-ce-cli containerd.io -y || exit 1
@@ -52,7 +97,6 @@ fi
 #    passwd postgres
 #fi
 
-
 # Set rights
 chown "$USER":"$USER" $DIR -R
 find $DIR -name "*.sh" -exec chmod +x {} \;
@@ -74,29 +118,6 @@ curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compo
 
 # Apply executable permissions to the binary
 chmod +x /usr/local/bin/docker-compose
-
-# commands for Postgresql
-#rm -f /usr/bin/pg_dump && chmod +x $DIR/pg_dump.sh && ln -s $DIR/pg_dump.sh /usr/bin/pg_dump
-#rm -f /usr/bin/psql && chmod +x $DIR/psql.sh && ln -s $DIR/psql.sh /usr/bin/psql
-#rm -f /usr/bin/pg_restore && chmod +x $DIR/pg_restore.sh && ln -s $DIR/pg_restore.sh /usr/bin/pg_restore
-
-# commands for PHP
-rm -f /usr/bin/php && chmod +x $DIR/php.sh && ln -s $DIR/php.sh /usr/bin/php
-rm -f /usr/bin/composer && chmod +x $DIR/composer.sh && ln -s $DIR/composer.sh /usr/bin/composer
-rm -f /usr/local/bin/composer && ln -s $DIR/composer.sh /usr/local/bin/composer
-
-# commands for npm
-#rm -f /usr/bin/yarn && chmod +x $DIR/yarn.sh && ln -s $DIR/yarn.sh /usr/bin/yarn
-#rm -f /usr/bin/npm && chmod +x $DIR/npm.sh && ln -s $DIR/npm.sh /usr/bin/npm
-
-# commands for Nginx
-#rm -f /usr/bin/nginx && chmod +x $DIR/nginx.sh && ln -s $DIR/nginx.sh /usr/bin/nginx
-
-# commands for Node.js
-#rm -f /usr/bin/node && chmod +x $DIR/node.sh && ln -s $DIR/node.sh /usr/bin/node
-
-# commands for rabbitMq
-#rm -f /usr/bin/rabbitmqctl && chmod +x $DIR/rabbitmqctl.sh && ln -s $DIR/rabbitmqctl.sh /usr/bin/rabbitmqctl
 
 # Stop and remove current containers
 docker-compose down

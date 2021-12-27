@@ -11,12 +11,20 @@ namespace App\Exception;
 use Exception;
 use JetBrains\PhpStorm\Pure;
 
-class WrongCsvHeadersException extends Exception {
-	
-	protected $message = "Headers didn't match!";
-	
-	#[Pure]
-	public function __construct() {
-		parent::__construct( $this->message );
-	}
+/**
+ * WrongCsvHeadersException
+ */
+class WrongCsvHeadersException extends Exception
+{
+
+    protected $message = "Headers didn't match!";
+
+    /**
+     * Exception constructor
+     */
+    #[Pure]
+    public function __construct()
+    {
+        parent::__construct($this->message);
+    }
 }

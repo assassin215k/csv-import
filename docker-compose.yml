@@ -21,3 +21,4 @@ services:
       - /etc/passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
       - /home/${USER}/:/home/${USER}/
+      - /tmp/:/tmp/

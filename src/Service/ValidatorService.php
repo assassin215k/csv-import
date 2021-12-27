@@ -15,25 +15,36 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * Validator class to validate Product before write to DB
  */
-class ValidatorService {
-	
-	private readonly ValidatorInterface $validator;
-	
-	public function __Construct() {
-		$this->validator = Validation::createValidatorBuilder()
-		                             ->addYamlMapping( __DIR__ . '/../Validator/product.yaml' )
-		                             ->getValidator();
-	}
-	
-	public function isValidProduct( Product $product ): bool {
-		$errors = $this->validator->validate( $product );
-		
-		if ( count( $errors ) ) {
-			echo "Invalid product: '$product':\r\n$errors\r\n";
-			
-			return false;
-		}
-		
-		return true;
-	}
+class ValidatorService
+{
+
+    private readonly ValidatorInterface $validator;
+
+    /**
+     * map yaml to validator
+     */
+    public function __Construct()
+    {
+        $this->validator = Validation::createValidatorBuilder()
+            ->addYamlMapping(__DIR__.'/../Validator/product.yaml')
+            ->getValidator();
+    }
+
+    /**
+     * @param Product $product
+     *
+     * @return bool
+     */
+    public function isValidProduct(Product $product): bool
+    {
+        $errors = $this->validator->validate($product);
+
+        if (count($errors)) {
+            echo "Invalid product: '$product':\r\n$errors\r\n";
+
+            return false;
+        }
+
+        return true;
+    }
 }

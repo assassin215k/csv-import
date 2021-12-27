@@ -9,12 +9,22 @@
 namespace App\Exception;
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 
-class EmptyFileException extends Exception {
-	
-	protected $message = "File '{fileName}' is empty!";
-	
-	public function __construct( string $fileName ) {
-		parent::__construct( str_replace( '{fileName}', $fileName, $this->message ) );
-	}
+/**
+ * EmptyFileException
+ */
+class EmptyFileException extends Exception
+{
+
+    protected $message = "File '%s' is empty!";
+
+    /**
+     * @param string $fileName
+     */
+    #[Pure]
+    public function __construct(string $fileName)
+    {
+        parent::__construct(empty($fileName) ?: sprintf($this->message, $fileName));
+    }
 }
