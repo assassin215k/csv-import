@@ -1,5 +1,7 @@
 FROM php:8.1-fpm
 
+RUN pecl install xdebug
+
 RUN apt update \
     && apt install -y libxml2-dev libonig-dev libpq-dev \
             libzip-dev \
@@ -8,7 +10,7 @@ RUN apt update \
             libpng-dev \
             git \
     && docker-php-ext-install mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets\
-    && docker-php-ext-enable mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets
+    && docker-php-ext-enable mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets xdebug
 
 RUN echo 'memory_limit=-1' >> /usr/local/etc/php/conf.d/docker-php-memory_limit.ini;
 RUN echo 'error_reporting=-1' >> /usr/local/etc/php/conf.d/docker-php-error_reporting.ini;
@@ -16,7 +18,8 @@ RUN echo 'log_errors_max_len=0' >> /usr/local/etc/php/conf.d/docker-php-log_erro
 RUN echo 'zend.assertions=1' >> /usr/local/etc/php/conf.d/docker-php-zend.assertions.ini;
 RUN echo 'assert.exception=1' >> /usr/local/etc/php/conf.d/docker-php-assert.exception.ini;
 RUN echo 'xdebug.show_exception_trace=0' >> /usr/local/etc/php/conf.d/docker-php-xdebug.show_exception_trace.ini;
-RUN echo 'suhosin.executor.include.whitelist = phar' >> /usr/local/etc/php/conf.d/docker-php-suhosin.executor.include.whitelist.ini;
+RUN echo 'suhosin.executor.include.whitelist=phar' >> /usr/local/etc/php/conf.d/docker-php-suhosin.executor.include.whitelist.ini;
+RUN echo 'xdebug.mode=coverage' >> /usr/local/etc/php/conf.d/docker-php-xdebug.mode.ini;
 
 # Download using curl
 RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar && chmod +x ./phpcs.phar && mv ./phpcs.phar /usr/local/bin/phpcs \
