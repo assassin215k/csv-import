@@ -11,22 +11,22 @@ DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 # clear and write aliases
 function writeAliases() {
   echo "" >/home/$USER/.docker_aliases
-  echo alias psql="${DIR}/psql.sh" >> /home/$USER/.docker_aliases
-  echo alias pg_dump="${DIR}/pg_dump.sh" >> /home/$USER/.docker_aliases
-  echo alias pg_restore="${DIR}/pg_restore.sh" >> /home/$USER/.docker_aliases
+#  echo alias psql="${DIR}/psql.sh" >> /home/$USER/.docker_aliases
+#  echo alias pg_dump="${DIR}/pg_dump.sh" >> /home/$USER/.docker_aliases
+#  echo alias pg_restore="${DIR}/pg_restore.sh" >> /home/$USER/.docker_aliases
 
   echo alias php="${DIR}/php.sh" >> /home/$USER/.docker_aliases
   echo alias composer="${DIR}/composer.sh" >> /home/$USER/.docker_aliases
-  echo alias phpcs="${DIR}/phpcs.sh" >> /home/$USER/.docker_aliases
-  echo alias phpcbf="${DIR}/phpcbf.sh" >> /home/$USER/.docker_aliases
+#  echo alias phpcs="${DIR}/phpcs.sh" >> /home/$USER/.docker_aliases
+#  echo alias phpcbf="${DIR}/phpcbf.sh" >> /home/$USER/.docker_aliases
 
-  echo alias node="${DIR}/node.sh" >> /home/$USER/.docker_aliases
-  echo alias yarn="${DIR}/yarn.sh" >> /home/$USER/.docker_aliases
-  echo alias npm="${DIR}/npm.sh" >> /home/$USER/.docker_aliases
+#  echo alias node="${DIR}/node.sh" >> /home/$USER/.docker_aliases
+#  echo alias yarn="${DIR}/yarn.sh" >> /home/$USER/.docker_aliases
+#  echo alias npm="${DIR}/npm.sh" >> /home/$USER/.docker_aliases
 
-  echo alias nginx="${DIR}/nginx.sh" >> /home/$USER/.docker_aliases
+#  echo alias nginx="${DIR}/nginx.sh" >> /home/$USER/.docker_aliases
 
-  echo alias rabbitmqctl="${DIR}/rabbitmqctl.sh" >> /home/$USER/.docker_aliases
+#  echo alias rabbitmqctl="${DIR}/rabbitmqctl.sh" >> /home/$USER/.docker_aliases
 
   echo "Written aliases"
 }

@@ -55,11 +55,17 @@
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "PHPCodeChecker\\Installer::postInstall",
+            "@phpcs-symfony"
         ],
         "post-update-cmd": [
-            "@auto-scripts"
-        ]
+            "@auto-scripts",
+            "PHPCodeChecker\\Installer::postInstall",
+            "@phpcs-symfony"
+        ],
+        "phpcs-symfony": "php vendor/squizlabs/php_codesniffer/bin/phpcs --config-set installed_paths vendor/escapestudios/symfony2-coding-standard",
+        "phpcs": "php vendor/squizlabs/php_codesniffer/bin/phpcs --standard=Symfony"
     },
     "conflict": {
         "symfony/symfony": "*"
