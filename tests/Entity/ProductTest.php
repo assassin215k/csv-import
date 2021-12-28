@@ -9,46 +9,30 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Product;
-use App\Misc\CsvRow;
+use App\Tests\AbstractCase\AbstractDatabaseCase;
 use DateTime;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\PDO\MySQL\Driver;
-use Doctrine\ORM\Configuration;
-use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use PHPUnit\Framework\TestCase;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * ProductTest
  */
-class ProductTest extends KernelTestCase
+class ProductTest extends AbstractDatabaseCase
 {
     private Product $product;
-    private EntityManager $manager;
 
     /**
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      * @throws ORMException
      *
      * @return void
      */
     public function setUp(): void
     {
-        self::bootKernel(['environment' => 'dev']);
-        $this->manager = static::$kernel->getContainer()->get('doctrine')->getManager();
-        $this->manager->beginTransaction();
+        parent::setUp();
 
         $this->product = new Product();
-    }
-
-    /**
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        $this->manager->rollback();
     }
 
     /**
@@ -86,27 +70,6 @@ class ProductTest extends KernelTestCase
     /**
      * @return void
      */
-    public function testGettersAndSetters(): void
-    {
-        $this->product->setCode('Code');
-        $this->product->setCost(125.11);
-        $this->product->setName('The product');
-        $this->product->setDescription('Description of product');
-        $this->product->setStock(2);
-        $this->product->setDiscontinued(true);
-
-        $this->assertEquals('Code', $this->product->getCode());
-        $this->assertEquals(125.11, $this->product->getCost());
-        $this->assertEquals('The product', $this->product->getName());
-        $this->assertEquals('Description of product', $this->product->getDescription());
-        $this->assertEquals(2, $this->product->getStock());
-
-        $this->assertInstanceOf(DateTime::class, $this->product->getDiscontinued());
-    }
-
-    /**
-     * @return void
-     */
     public function testToStringClass(): void
     {
         $this->product->setCode('Code123');
@@ -132,16 +95,40 @@ class ProductTest extends KernelTestCase
      */
     public function testId(): void
     {
+        $this->fill();
+
+        $this->manager->persist($this->product);
+        $this->manager->flush();
+
+        $this->assertNotEmpty($this->product->getId());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGettersAndSetters(): void
+    {
+        $this->fill();
+
+        $this->assertEquals('Code', $this->product->getCode());
+        $this->assertEquals(125.11, $this->product->getCost());
+        $this->assertEquals('The product', $this->product->getName());
+        $this->assertEquals('Description of product', $this->product->getDescription());
+        $this->assertEquals(2, $this->product->getStock());
+
+        $this->assertInstanceOf(DateTime::class, $this->product->getDiscontinued());
+    }
+
+    /**
+     * @return void
+     */
+    private function fill(): void
+    {
         $this->product->setCode('Code');
         $this->product->setCost(125.11);
         $this->product->setName('The product');
         $this->product->setDescription('Description of product');
         $this->product->setStock(2);
         $this->product->setDiscontinued(true);
-
-        $this->manager->persist($this->product);
-        $this->manager->flush();
-
-        $this->assertNotEmpty($this->product->getId());
     }
 }

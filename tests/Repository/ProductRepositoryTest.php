@@ -10,18 +10,16 @@ namespace App\Tests\Repository;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use App\Tests\AbstractCase\AbstractDatabaseCase;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * ProductRepositoryTest
  */
-class ProductRepositoryTest extends KernelTestCase
+class ProductRepositoryTest extends AbstractDatabaseCase
 {
-    private EntityManager $manager;
     private ProductRepository $repository;
 
     /**
@@ -32,19 +30,9 @@ class ProductRepositoryTest extends KernelTestCase
      */
     public function setUp(): void
     {
-        self::bootKernel(['environment' => 'dev']);
-        $this->manager = static::$kernel->getContainer()->get('doctrine')->getManager();
-        $this->manager->beginTransaction();
+        parent::setUp();
 
         $this->repository = $this->manager->getRepository(Product::class);
-    }
-
-    /**
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        $this->manager->rollback();
     }
 
     /**
@@ -55,7 +43,7 @@ class ProductRepositoryTest extends KernelTestCase
      */
     public function testRemove()
     {
-        $this->getProduct('Code1');
+        $this->addProduct('Code1');
         $this->manager->flush();
 
         $product = $this->repository->findBy(['code' => 'Code1']);
@@ -74,10 +62,10 @@ class ProductRepositoryTest extends KernelTestCase
      */
     public function testRemoveWithFilterById()
     {
-        $this->getProduct('Code1');
-        $this->getProduct('Code2');
-        $this->getProduct('Code3');
-        $this->getProduct('Code4');
+        $this->addProduct('Code1');
+        $this->addProduct('Code2');
+        $this->addProduct('Code3');
+        $this->addProduct('Code4');
 
         $this->manager->flush();
 
@@ -92,7 +80,7 @@ class ProductRepositoryTest extends KernelTestCase
      *
      * @param string $code
      */
-    private function getProduct(string $code)
+    private function addProduct(string $code)
     {
         $product = new Product();
         $product->setCode($code);
