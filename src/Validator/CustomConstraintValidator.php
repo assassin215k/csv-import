@@ -9,7 +9,6 @@
 namespace App\Validator;
 
 use App\Entity\CustomConstraintInterface;
-use App\Entity\Product;
 use App\Exception\UnexpectedClassException;
 use Exception;
 use Symfony\Component\Validator\Constraint;
@@ -30,7 +29,6 @@ class CustomConstraintValidator extends ConstraintValidator
      */
     public function validate(mixed $value, Constraint $constraint)
     {
-
         if (!$value instanceof CustomConstraintInterface) {
             throw new UnexpectedClassException(CustomConstraintInterface::class);
         }
