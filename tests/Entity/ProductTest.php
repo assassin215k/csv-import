@@ -56,6 +56,5 @@ class ProductTest extends TestCase
         $this->product->setStock(9);
 
         $this->assertTrue($this->product->isInvalid());
-        $this->assertTrue($this->product->isInvalid());
     }
 }
