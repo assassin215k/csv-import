@@ -124,6 +124,14 @@ class Product implements CustomConstraintInterface
     }
 
     /**
+     * @return DateTimeInterface|null
+     */
+    public function getDiscontinued(): ?DateTimeInterface
+    {
+        return $this->discontinued;
+    }
+
+    /**
      * @param bool $discontinued
      *
      * @return $this
@@ -136,31 +144,12 @@ class Product implements CustomConstraintInterface
     }
 
     /**
-     * @return DateTimeInterface|null
+     * @return bool
      */
-    public function getDiscontinued(): ?DateTimeInterface
+    #[Pure]
+    public function isInvalid(): bool
     {
-        return $this->discontinued;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getStock(): ?int
-    {
-        return $this->stock;
-    }
-
-    /**
-     * @param int $stock
-     *
-     * @return Product
-     */
-    public function setStock(int $stock): Product
-    {
-        $this->stock = $stock;
-
-        return $this;
+        return $this->getCost() < 5 && $this->getStock() < 10;
     }
 
     /**
@@ -168,7 +157,7 @@ class Product implements CustomConstraintInterface
      */
     public function getCost(): ?float
     {
-        return $this->cost;
+        return $this->cost ?? null;
     }
 
     /**
@@ -184,12 +173,23 @@ class Product implements CustomConstraintInterface
     }
 
     /**
-     * @return bool
+     * @return int|null
      */
-    #[Pure]
-    public function isInvalid(): bool
+    public function getStock(): ?int
     {
-        return $this->getCost() < 5 && $this->getStock() < 10;
+        return $this->stock ?? null;
+    }
+
+    /**
+     * @param int $stock
+     *
+     * @return Product
+     */
+    public function setStock(int $stock): Product
+    {
+        $this->stock = $stock;
+
+        return $this;
     }
 
     /**

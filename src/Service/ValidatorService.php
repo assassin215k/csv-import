@@ -37,14 +37,6 @@ class ValidatorService
      */
     public function isValidProduct(Product $product): bool
     {
-        $errors = $this->validator->validate($product);
-
-        if (count($errors)) {
-            echo "Invalid product: '$product':\r\n$errors\r\n";
-
-            return false;
-        }
-
-        return true;
+        return !count($this->validator->validate($product));
     }
 }
