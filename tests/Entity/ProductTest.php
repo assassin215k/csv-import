@@ -35,6 +35,16 @@ class ProductTest extends TestCase
         $this->product->setStock(11);
 
         $this->assertNotTrue($this->product->isInvalid());
+
+        $this->product->setCost(1);
+        $this->product->setStock(11);
+
+        $this->assertNotTrue($this->product->isInvalid());
+
+        $this->product->setCost(20);
+        $this->product->setStock(1);
+
+        $this->assertNotTrue($this->product->isInvalid());
     }
 
     /**
