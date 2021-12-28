@@ -34,7 +34,7 @@ class ProductRepository extends ServiceEntityRepository
      *
      * @return void
      */
-    public function removeWithFilterById(array $codes): void
+    public function removeByCodes(array $codes = []): void
     {
         $qb = $this->createQueryBuilder('p')->delete();
 

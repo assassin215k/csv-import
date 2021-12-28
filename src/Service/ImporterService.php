@@ -11,7 +11,6 @@ namespace App\Service;
 use App\Entity\Product;
 use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
-use App\Exception\WrongCsvHeadersException;
 use App\Misc\CsvRow;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -85,7 +84,7 @@ class ImporterService
 
         $this->manager->flush();
 
-        $this->repository->removeWithFilterById($productCodes);
+        $this->repository->removeByCodes($productCodes);
 
         return [
             'skippedItems' => $skippedItems,

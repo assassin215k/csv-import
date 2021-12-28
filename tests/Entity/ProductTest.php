@@ -15,6 +15,8 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDO\MySQL\Driver;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -28,7 +30,7 @@ class ProductTest extends KernelTestCase
 
     /**
      * @throws \Doctrine\DBAL\Exception
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      *
      * @return void
      */
@@ -123,6 +125,9 @@ class ProductTest extends KernelTestCase
     }
 
     /**
+     * @throws ORMException
+     * @throws OptimisticLockException
+     *
      * @return void
      */
     public function testId(): void
