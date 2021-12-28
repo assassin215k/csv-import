@@ -17,7 +17,7 @@ use JetBrains\PhpStorm\Pure;
 class UnexpectedClassException extends Exception
 {
 
-    protected $message = "Unexpected class, required %s";
+    protected $message = "Unexpected class, required '%s'.";
 
     /**
      * @param string $className
