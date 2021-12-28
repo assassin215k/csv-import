@@ -64,11 +64,11 @@ class Product implements CustomConstraintInterface
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getName(): ?string
+    public function getName(): string
     {
-        return $this->name;
+        return $this->name ?? '';
     }
 
     /**
@@ -84,11 +84,11 @@ class Product implements CustomConstraintInterface
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
-        return $this->description;
+        return $this->description ?? '';
     }
 
     /**
@@ -104,11 +104,11 @@ class Product implements CustomConstraintInterface
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getCode(): ?string
+    public function getCode(): string
     {
-        return $this->code;
+        return $this->code ?? '';
     }
 
     /**
@@ -153,11 +153,11 @@ class Product implements CustomConstraintInterface
     }
 
     /**
-     * @return float|null
+     * @return float
      */
-    public function getCost(): ?float
+    public function getCost(): float
     {
-        return $this->cost ?? null;
+        return $this->cost ?? 0;
     }
 
     /**
@@ -173,11 +173,11 @@ class Product implements CustomConstraintInterface
     }
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getStock(): ?int
+    public function getStock(): int
     {
-        return $this->stock ?? null;
+        return $this->stock ?? 0;
     }
 
     /**

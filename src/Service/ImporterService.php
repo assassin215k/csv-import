@@ -36,7 +36,6 @@ class ImporterService
         $this->repository = $this->manager->getRepository('App:Product');
     }
 
-
     /**
      * @throws CsvException
      * @throws InvalidArgument
