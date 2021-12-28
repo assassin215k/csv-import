@@ -11,21 +11,42 @@ namespace App\Tests\Entity;
 use App\Entity\Product;
 use App\Misc\CsvRow;
 use DateTime;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\PDO\MySQL\Driver;
+use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * ProductTest
  */
-class ProductTest extends TestCase
+class ProductTest extends KernelTestCase
 {
     private Product $product;
+    private EntityManager $manager;
 
     /**
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \Doctrine\ORM\ORMException
+     *
      * @return void
      */
     public function setUp(): void
     {
+        self::bootKernel(['environment' => 'dev']);
+        $this->manager = static::$kernel->getContainer()->get('doctrine')->getManager();
+        $this->manager->beginTransaction();
+
         $this->product = new Product();
+    }
+
+    /**
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        $this->manager->rollback();
     }
 
     /**
@@ -99,5 +120,23 @@ class ProductTest extends TestCase
         $this->product->setCode('Code123');
 
         $this->assertNotEmpty($this->product->getInvalidMessage());
+    }
+
+    /**
+     * @return void
+     */
+    public function testId(): void
+    {
+        $this->product->setCode('Code');
+        $this->product->setCost(125.11);
+        $this->product->setName('The product');
+        $this->product->setDescription('Description of product');
+        $this->product->setStock(2);
+        $this->product->setDiscontinued(true);
+
+        $this->manager->persist($this->product);
+        $this->manager->flush();
+
+        $this->assertNotEmpty($this->product->getId());
     }
 }

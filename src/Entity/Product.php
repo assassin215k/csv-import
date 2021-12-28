@@ -56,8 +56,6 @@ class Product implements CustomConstraintInterface
     }
 
     /**
-     * @codeCoverageIgnore
-     *
      * @return int|null
      */
     public function getId(): ?int
