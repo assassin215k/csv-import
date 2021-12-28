@@ -28,18 +28,18 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * Remove products by filter of id
+     * Remove products with filter by array of product codes
      *
-     * @param array $ids
+     * @param array $codes
      *
      * @return void
      */
-    public function removeWithFilterById(array $ids): void
+    public function removeWithFilterById(array $codes): void
     {
         $qb = $this->createQueryBuilder('p')->delete();
 
-        if (count($ids)) {
-            $qb->andWhere('p.id not in(:ids)')->setParameter('ids', $ids);
+        if (count($codes)) {
+            $qb->andWhere('p.code not in(:codes)')->setParameter('codes', $codes);
         }
 
         $qb->getQuery()->execute();

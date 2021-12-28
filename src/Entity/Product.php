@@ -56,6 +56,8 @@ class Product implements CustomConstraintInterface
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @return int|null
      */
     public function getId(): ?int
@@ -133,6 +135,14 @@ class Product implements CustomConstraintInterface
         $this->discontinued = $discontinued ? new DateTime() : null;
 
         return $this;
+    }
+
+    /**
+     * @return DateTimeInterface|null
+     */
+    public function getDiscontinued(): ?DateTimeInterface
+    {
+        return $this->discontinued;
     }
 
     /**

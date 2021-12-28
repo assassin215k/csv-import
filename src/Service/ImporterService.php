@@ -62,11 +62,11 @@ class ImporterService
         $successItems = 0;
         $invalidItems = 0;
 
-        $productIds = [];
+        $productCodes = [];
         foreach ($reader->getRecords() as $key => $record) {
             $product = $this->getProduct($record);
 
-            if (!$this->validator->isValidProduct($product) || in_array($product->getId(), $productIds)) {
+            if (!$this->validator->isValidProduct($product) || in_array($product->getCode(), $productCodes)) {
                 $invalidItems++;
 
                 continue;
@@ -76,7 +76,7 @@ class ImporterService
 
             $successItems++;
 
-            $productIds[] = $product->getId();
+            $productCodes[] = $product->getCode();
 
             if ($key % 10 === 0) {
                 $this->manager->flush();
@@ -85,7 +85,7 @@ class ImporterService
 
         $this->manager->flush();
 
-        $this->repository->removeWithFilterById($productIds);
+        $this->repository->removeWithFilterById($productCodes);
 
         return [
             'skippedItems' => $skippedItems,

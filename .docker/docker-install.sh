@@ -28,7 +28,7 @@ function writeAliases() {
 
 #  echo alias rabbitmqctl="${DIR}/rabbitmqctl.sh" >> /home/$USER/.docker_aliases
 
-  echo alias phpunit="alias phpunit='${DIR}/../vendor/bin/simple-phpunit'" >> /home/$USER/.docker_aliases
+  echo alias phpunit="alias phpunit='${DIR}/../vendor/bin/simple-phpunit  --coverage-html xHTML'" >> /home/$USER/.docker_aliases
 
   echo "Written aliases"
 }
