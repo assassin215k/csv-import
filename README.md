@@ -24,6 +24,9 @@ To use Symfony standard import ```.editconfig``` in ```File -> Settings -> Edito
 To run import use ```php bin/console app:csv-import ./.info/stock.csv``` command
 where ```./.info/stock.csv``` is the path to your csv file
 
+### Tests coverage
+To see report open xHTML/index.html after tests run
+
 ============
 
 ## Candidate Development Test
