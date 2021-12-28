@@ -28,6 +28,8 @@ function writeAliases() {
 
 #  echo alias rabbitmqctl="${DIR}/rabbitmqctl.sh" >> /home/$USER/.docker_aliases
 
+  echo alias phpunit="alias phpunit='${DIR}/../vendor/bin/simple-phpunit'" >> /home/$USER/.docker_aliases
+
   echo "Written aliases"
 }
 
@@ -59,7 +61,6 @@ fi
 aliases
 
 makeExecutable
-
 
 # Uninstall old versions
 apt-get remove docker docker-engine docker.io containerd runc
