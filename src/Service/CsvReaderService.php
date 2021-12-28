@@ -11,6 +11,7 @@ namespace App\Service;
 use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
 use App\Exception\WrongCsvHeadersException;
+use App\Misc\CsvRow;
 use Exception;
 use League\Csv\ByteSequence;
 use League\Csv\CharsetConverter;
@@ -39,17 +40,15 @@ class CsvReaderService
      * @return TabularDataReader
      *
      */
-    public function read(string $fileName, string $delimiter, array $targetHeaders): TabularDataReader
+    public function read(string $fileName, string $delimiter, array $targetHeaders = []): TabularDataReader
     {
+        if (empty($targetHeaders)) {
+            $targetHeaders = CsvRow::$headers;
+        }
+
         self::checkFile($fileName);
 
         $csv = Reader::createFromPath($fileName);
-
-        $inputBom = $csv->getInputBOM();
-
-        if (ByteSequence::BOM_UTF16_LE === $inputBom || ByteSequence::BOM_UTF16_BE === $inputBom) {
-            CharsetConverter::addTo($csv, 'utf-16', 'utf-8');
-        }
 
         $csv->setDelimiter($delimiter);
         $csv->setHeaderOffset(0);

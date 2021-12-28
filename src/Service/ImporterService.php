@@ -55,7 +55,7 @@ class ImporterService
     ])]
     public function import(string $fileName, string $delimiter): array
     {
-        $reader = $this->reader->read($fileName, $delimiter, CsvRow::$headers);
+        $reader = $this->reader->read($fileName, $delimiter);
 
         $skippedItems = 0;
         $successItems = 0;
