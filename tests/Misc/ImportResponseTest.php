@@ -29,6 +29,12 @@ class ImportResponseTest extends TestCase
         $response->skippedString[] = 4;
 
         $this->assertEquals(4, $response->total());
-        $this->assertSame("=====\r\nSuccess: 1\r\nSkipped line numbers: 3,4\r\nInvalid codes: 001\r\n=====\r\nTotal records proceed: 4\r\n=====\r\n", (string) $response);
+
+        $response = (string) $response;
+
+        $this->assertStringContainsString('Success: 1', $response);
+        $this->assertStringContainsString('Skipped line numbers: 3,4', $response);
+        $this->assertStringContainsString('Invalid codes: 001', $response);
+        $this->assertStringContainsString('Total records proceed: 4', $response);
     }
 }

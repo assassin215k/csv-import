@@ -68,17 +68,13 @@ class ImportCommand extends Command
 
         try {
             $this->read($input->getArgument('file'), $input->getOption('delimiter'));
-
-            return Command::SUCCESS;
         } catch (InvalidArgument $e) {
             $output->writeln("Invalid delimiter specified!");
-
-            return Command::INVALID;
         } catch (Exception $e) {
             $output->writeln($e->getMessage());
         }
 
-        return Command::FAILURE;
+        return Command::SUCCESS;
     }
 
     /**
