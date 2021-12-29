@@ -6,12 +6,13 @@
  * Time: 11:50
  */
 
-namespace App\Tests\Validator;
+namespace App\Tests\Validator\Product;
 
-use App\Entity\CustomConstraintInterface;
+use App\Entity\PriceConstraintInterface;
 use App\Exception\UnexpectedClassException;
-use App\Validator\CustomConstraint;
-use App\Validator\CustomConstraintValidator;
+use App\Validator\Product\PriceConstraint;
+use App\Validator\Product\PriceConstraintValidator;
+use DateTime;
 use Exception;
 use Mockery;
 use Mockery\LegacyMockInterface;
@@ -26,7 +27,7 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 /**
  * CustomConstraintValidatorTest
  */
-class CustomConstraintValidatorTest extends TestCase
+class PriceConstraintValidatorTest extends TestCase
 {
     /**
      * @throws Exception
@@ -35,11 +36,11 @@ class CustomConstraintValidatorTest extends TestCase
      */
     public function testWrongTarget()
     {
-        $constraint = new CustomConstraint();
-        $validator = new CustomConstraintValidator();
+        $constraint = new PriceConstraint();
+        $validator = new PriceConstraintValidator();
 
         $this->expectException(UnexpectedClassException::class);
-        $validator->validate(new \DateTime(), $constraint);
+        $validator->validate(new DateTime(), $constraint);
     }
 
     /**
@@ -49,8 +50,8 @@ class CustomConstraintValidatorTest extends TestCase
      */
     public function testWrongConstraint()
     {
-        $value = Mockery::mock(CustomConstraintInterface::class);
-        $validator = new CustomConstraintValidator();
+        $value = Mockery::mock(PriceConstraintInterface::class);
+        $validator = new PriceConstraintValidator();
 
         $this->expectException(UnexpectedTypeException::class);
         $validator->validate($value, new NotNull());
@@ -63,10 +64,11 @@ class CustomConstraintValidatorTest extends TestCase
      */
     public function testInvalidEntity()
     {
-        $value = Mockery::mock(CustomConstraintInterface::class);
+        $constraint = new PriceConstraint();
+        $value = Mockery::mock(PriceConstraintInterface::class);
 
-        $value->shouldReceive('isInvalid')->once()->andReturnTrue();
-        $value->shouldReceive('getInvalidMessage')->once()->andReturn('error description');
+        $value->shouldReceive('getCost')->once()->andReturn(3.5);
+        $value->shouldReceive('getStock')->once()->andReturn(9);
 
         $constraintViolationList = Mockery::mock(ConstraintViolationList::class);
         $constraintViolationList->shouldReceive('count')->andReturn(1);
@@ -74,12 +76,11 @@ class CustomConstraintValidatorTest extends TestCase
         $context = Mockery::mock(ExecutionContextInterface::class);
 
         $buildViolation = $context->shouldReceive('buildViolation');
-        $buildViolation->once()->with($value->getInvalidMessage());
+        $buildViolation->once()->with($constraint::$message);
         $buildViolation->andReturn($this->getMockConstraintViolationBuilder());
         $context->shouldReceive('getViolations')->andReturn($constraintViolationList);
 
-        $constraint = new CustomConstraint();
-        $validator = new CustomConstraintValidator();
+        $validator = new PriceConstraintValidator();
         $validator->initialize($context);
 
         $validator->validate($value, $constraint);
@@ -99,15 +100,20 @@ class CustomConstraintValidatorTest extends TestCase
     }
 
     /**
+     * @dataProvider priceValidProvider
+     *
      * @throws Exception
+     *
+     * @param float $cost
+     * @param int   $stock
      *
      * @return void
      */
-    public function testValidEntity()
+    public function testValidEntity(float $cost, int $stock)
     {
-        $value = Mockery::mock(CustomConstraintInterface::class);
-
-        $value->shouldReceive('isInvalid')->once()->andReturnFalse();
+        $value = Mockery::mock(PriceConstraintInterface::class);
+        $value->shouldReceive('getCost')->once()->andReturn($cost);
+        $value->shouldReceive('getStock')->once()->andReturn($stock);
 
         $constraintViolationList = Mockery::mock(ConstraintViolationList::class);
         $constraintViolationList->shouldReceive('count')->andReturn(0);
@@ -115,11 +121,23 @@ class CustomConstraintValidatorTest extends TestCase
         $context = Mockery::mock(ExecutionContextInterface::class);
         $context->shouldReceive('getViolations')->andReturn($constraintViolationList);
 
-        $constraint = new CustomConstraint();
-        $validator = new CustomConstraintValidator();
+        $constraint = new PriceConstraint();
+        $validator = new PriceConstraintValidator();
         $validator->initialize($context);
 
         $validator->validate($value, $constraint);
         $this->assertEquals(0, count($constraintViolationList));
+    }
+
+    /**
+     * @return array
+     */
+    public function priceValidProvider(): array
+    {
+        return [
+            [15, 11],
+            [1.5, 11],
+            [20, 1],
+        ];
     }
 }

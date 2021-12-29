@@ -13,13 +13,8 @@ use JetBrains\PhpStorm\Pure;
 /**
  * Product entity to import
  */
-class Product implements CustomConstraintInterface
+class Product implements PriceConstraintInterface
 {
-    /**
-     * @var string The message to use in validation error
-     */
-    private static string $invalidMessage = 'If the product cost less then 5 that store must be more then 10';
-
     private ?int $id;
 
     private ?string $name;
@@ -144,15 +139,6 @@ class Product implements CustomConstraintInterface
     }
 
     /**
-     * @return bool
-     */
-    #[Pure]
-    public function isInvalid(): bool
-    {
-        return $this->getCost() < 5 && $this->getStock() < 10;
-    }
-
-    /**
      * @return float
      */
     public function getCost(): float
@@ -190,13 +176,5 @@ class Product implements CustomConstraintInterface
         $this->stock = $stock;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getInvalidMessage(): string
-    {
-        return self::$invalidMessage;
     }
 }
