@@ -11,15 +11,15 @@ namespace App\Entity;
 /**
  * CustomConstraintInterface
  */
-interface CustomConstraintInterface
+interface PriceConstraintInterface
 {
     /**
-     * @return bool
+     * @return float
      */
-    public function isInvalid(): bool;
+    public function getCost(): float;
 
     /**
-     * @return string
+     * @return int
      */
-    public function getInvalidMessage(): string;
+    public function getStock(): int;
 }

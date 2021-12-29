@@ -11,7 +11,6 @@ namespace App\Tests\Entity;
 use App\Entity\Product;
 use App\Tests\AbstractCase\AbstractDatabaseCase;
 use DateTime;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 
@@ -20,71 +19,16 @@ use Doctrine\ORM\ORMException;
  */
 class ProductTest extends AbstractDatabaseCase
 {
-    private Product $product;
-
-    /**
-     * @throws Exception
-     * @throws ORMException
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->product = new Product();
-    }
-
-    /**
-     * @return void
-     */
-    public function testValidPrice(): void
-    {
-        $this->product->setCost(15);
-        $this->product->setStock(11);
-
-        $this->assertNotTrue($this->product->isInvalid());
-
-        $this->product->setCost(1);
-        $this->product->setStock(11);
-
-        $this->assertNotTrue($this->product->isInvalid());
-
-        $this->product->setCost(20);
-        $this->product->setStock(1);
-
-        $this->assertNotTrue($this->product->isInvalid());
-    }
-
-    /**
-     * @return void
-     */
-    public function testInValidPrice(): void
-    {
-        $this->product->setCost(3.5);
-        $this->product->setStock(9);
-
-        $this->assertTrue($this->product->isInvalid());
-    }
 
     /**
      * @return void
      */
     public function testToStringClass(): void
     {
-        $this->product->setCode('Code123');
+        $product = new Product();
+        $product->setCode('Code123');
 
-        $this->assertEquals('Code123', $this->product);
-    }
-
-    /**
-     * @return void
-     */
-    public function testHasInvalidMessage(): void
-    {
-        $this->product->setCode('Code123');
-
-        $this->assertNotEmpty($this->product->getInvalidMessage());
+        $this->assertEquals('Code123', $product);
     }
 
     /**
@@ -93,42 +37,28 @@ class ProductTest extends AbstractDatabaseCase
      *
      * @return void
      */
-    public function testId(): void
-    {
-        $this->fill();
-
-        $this->manager->persist($this->product);
-        $this->manager->flush();
-
-        $this->assertNotEmpty($this->product->getId());
-    }
-
-    /**
-     * @return void
-     */
     public function testGettersAndSetters(): void
     {
-        $this->fill();
+        $product = new Product();
 
-        $this->assertEquals('Code', $this->product->getCode());
-        $this->assertEquals(125.11, $this->product->getCost());
-        $this->assertEquals('The product', $this->product->getName());
-        $this->assertEquals('Description of product', $this->product->getDescription());
-        $this->assertEquals(2, $this->product->getStock());
+        $product->setCode('Code');
+        $product->setCost(125.11);
+        $product->setName('The product');
+        $product->setDescription('Description of product');
+        $product->setStock(2);
+        $product->setDiscontinued(true);
 
-        $this->assertInstanceOf(DateTime::class, $this->product->getDiscontinued());
-    }
+        $this->manager->persist($product);
+        $this->manager->flush();
 
-    /**
-     * @return void
-     */
-    private function fill(): void
-    {
-        $this->product->setCode('Code');
-        $this->product->setCost(125.11);
-        $this->product->setName('The product');
-        $this->product->setDescription('Description of product');
-        $this->product->setStock(2);
-        $this->product->setDiscontinued(true);
+        $this->assertEquals('Code', $product->getCode());
+        $this->assertEquals(125.11, $product->getCost());
+        $this->assertEquals('The product', $product->getName());
+        $this->assertEquals('Description of product', $product->getDescription());
+        $this->assertEquals(2, $product->getStock());
+
+        $this->assertNotEmpty($product->getId());
+
+        $this->assertInstanceOf(DateTime::class, $product->getDiscontinued());
     }
 }

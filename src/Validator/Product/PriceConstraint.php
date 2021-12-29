@@ -6,15 +6,16 @@
  * Time: 18:24
  */
 
-namespace App\Validator;
+namespace App\Validator\Product;
 
 use Symfony\Component\Validator\Constraint;
 
 /**
  * CustomConstraint
  */
-class CustomConstraint extends Constraint
+class PriceConstraint extends Constraint
 {
+    public static string $message = 'If the price less then 5 that stock must be more then 10.';
 
     /**
      * @return string
