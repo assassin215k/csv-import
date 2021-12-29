@@ -11,7 +11,6 @@ namespace App\Tests\Service;
 use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
 use App\Exception\WrongCsvHeadersException;
-use App\Misc\CsvRow;
 use App\Service\CsvReaderService;
 use League\Csv\Exception;
 use League\Csv\InvalidArgument;
@@ -50,7 +49,7 @@ class CsvReaderServiceTest extends TestCase
     {
         $service = new CsvReaderService();
 
-        $reader = $service->read('.info/delimiter.csv', '|');
+        $reader = $service->read('./tests/csvForTests/delimiter.csv', '|');
 
         $this->assertGreaterThan(0, $reader->count());
     }
@@ -67,7 +66,7 @@ class CsvReaderServiceTest extends TestCase
     {
         $service = new CsvReaderService();
 
-        $reader = $service->read('.info/quotes.csv', ',');
+        $reader = $service->read('./tests/csvForTests/quotes.csv', ',');
 
         $this->assertGreaterThan(0, $reader->count());
     }
@@ -86,7 +85,7 @@ class CsvReaderServiceTest extends TestCase
 
         $this->expectException(WrongCsvHeadersException::class);
 
-        $service->read('.info/stock.csv', ',', ['someHeader']);
+        $service->read('./tests/csvForTests/stock.csv', ',', ['someHeader']);
     }
 
     /**
@@ -103,7 +102,7 @@ class CsvReaderServiceTest extends TestCase
 
         $this->expectException(MissedFileException::class);
 
-        $service->read('.info/wrong.csv', ',');
+        $service->read('/wrong.csv', ',');
     }
 
     /**
@@ -120,6 +119,23 @@ class CsvReaderServiceTest extends TestCase
 
         $this->expectException(EmptyFileException::class);
 
-        $service->read('.info/empty.csv', ',');
+        $service->read('./tests/csvForTests/empty.csv', ',');
+    }
+
+    /**
+     * @throws EmptyFileException
+     * @throws MissedFileException
+     * @throws Exception
+     * @throws InvalidArgument
+     *
+     * @return void
+     */
+    public function testMissedHeaders()
+    {
+        $service = new CsvReaderService();
+
+        $this->expectException(WrongCsvHeadersException::class);
+
+        $service->read('./tests/csvForTests/no_headers.csv', ',');
     }
 }

@@ -94,9 +94,7 @@ class ImportCommand extends Command
     {
         $result = $this->service->import($file, $delimiter);
 
-        $this->output->writeln("Done:");
-        $this->output->writeln("Skipped: ".$result['skippedItems']);
-        $this->output->writeln("Success: ".$result['successItems']);
-        $this->output->writeln("Invalid: ".$result['invalidItems']);
+        $this->output->writeln("Report:");
+        $this->output->writeln($result);
     }
 }

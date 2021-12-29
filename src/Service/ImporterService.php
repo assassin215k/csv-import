@@ -12,9 +12,9 @@ use App\Entity\Product;
 use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
 use App\Misc\CsvRow;
+use App\Misc\ImportResponse;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use JetBrains\PhpStorm\ArrayShape;
 use League\Csv\Exception as CsvException;
 use League\Csv\InvalidArgument;
 
@@ -45,36 +45,17 @@ class ImporterService
      * @param string $fileName
      * @param string $delimiter
      *
-     * @return int[]
+     * @return ImportResponse
      */
-    #[ArrayShape([
-        'skippedItems' => "int",
-        'successItems' => "int",
-        'invalidItems' => "int",
-    ])]
-    public function import(string $fileName, string $delimiter): array
+    public function import(string $fileName, string $delimiter = ','): ImportResponse
     {
         $reader = $this->reader->read($fileName, $delimiter);
 
-        $skippedItems = 0;
-        $successItems = 0;
-        $invalidItems = 0;
+        $response = new ImportResponse();
 
         $productCodes = [];
         foreach ($reader->getRecords() as $key => $record) {
-            $product = $this->getProduct($record);
-
-            if (!$this->validator->isValidProduct($product) || in_array($product->getCode(), $productCodes)) {
-                $invalidItems++;
-
-                continue;
-            }
-
-            $this->manager->persist($product);
-
-            $successItems++;
-
-            $productCodes[] = $product->getCode();
+            $this->addProduct($key, $record, $response, $productCodes);
 
             if ($key % 10 === 0) {
                 $this->manager->flush();
@@ -85,11 +66,38 @@ class ImporterService
 
         $this->repository->removeByCodes($productCodes);
 
-        return [
-            'skippedItems' => $skippedItems,
-            'successItems' => $successItems,
-            'invalidItems' => $invalidItems,
-        ];
+        return $response;
+    }
+
+    /**
+     * @param int            $key
+     * @param array          $record
+     * @param ImportResponse $response
+     * @param array          $codes
+     *
+     * @return void
+     */
+    private function addProduct(int $key, array $record, ImportResponse $response, array &$codes)
+    {
+        $product = $this->makeProduct($record);
+
+        if (in_array($product->getCode(), $codes)) {
+            $response->skippedString[] = $key + 1;
+
+            return;
+        }
+
+        if (!$this->validator->isValidProduct($product)) {
+            $response->invalidCode[] = $product->getCode();
+
+            return;
+        }
+
+        $this->manager->persist($product);
+
+        $response->successItems++;
+
+        $codes[] = $product->getCode();
     }
 
     /**
@@ -97,17 +105,13 @@ class ImporterService
      *
      * @return Product
      */
-    private function getProduct(array $record): Product
+    private function makeProduct(array $record): Product
     {
         $code = $record[CsvRow::CODE];
 
         $product = $this
             ->repository
-            ->findOneBy(
-                [
-                    'code' => $code,
-                ]
-            );
+            ->findOneBy(['code' => $code]);
 
         if (!$product) {
             $product = new Product();
