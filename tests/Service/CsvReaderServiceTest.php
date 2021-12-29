@@ -138,4 +138,20 @@ class CsvReaderServiceTest extends TestCase
 
         $service->read('./tests/csvForTests/no_headers.csv', ',');
     }
+
+    /**
+     * @return void
+     */
+    public function testEncodingIssue()
+    {
+        //TODO required file in wrong(different from utf-8 ?) encoding
+    }
+
+    /**
+     * @return void
+     */
+    public function testLineTerminationIssue()
+    {
+        //TODO required to understand what is it
+    }
 }

@@ -10,34 +10,38 @@ namespace App\Tests\Service;
 
 use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
+use App\Repository\ProductRepository;
 use App\Service\CsvReaderService;
 use App\Service\ImporterService;
 use App\Service\ValidatorService;
-use App\Tests\AbstractCase\AbstractDatabaseCase;
-use Doctrine\DBAL\Exception;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\EntityManager;
 use League\Csv\InvalidArgument;
+use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * ImporterServiceTest
  */
-class ImporterServiceTest extends AbstractDatabaseCase
+class ImporterServiceTest extends TestCase
 {
 
     private ImporterService $service;
 
     /**
-     * @throws Exception
-     * @throws ORMException
-     *
      * @return void
      */
     public function setUp(): void
     {
-        parent::setUp();
+        $repository = Mockery::mock(ProductRepository::class);
+        $repository->shouldReceive('removeByCodes');
+        $repository->shouldReceive('findOneBy')->andReturn([]);
 
-        $this->service = new ImporterService(new CsvReaderService(), new ValidatorService(), $this->manager);
-        $this->manager->getRepository('App:Product')->removeByCodes();
+        $manager = Mockery::mock(EntityManager::class);
+        $manager->shouldReceive('persist');
+        $manager->shouldReceive('flush');
+        $manager->shouldReceive('getRepository')->with('App:Product')->andReturn($repository);
+
+        $this->service = new ImporterService(new CsvReaderService(), new ValidatorService(), $manager);
     }
 
     /**
@@ -102,31 +106,5 @@ class ImporterServiceTest extends AbstractDatabaseCase
     {
         //TODO resolve too long import
 //        $this->assertEquals(1001849, $this->service->import('./tests/csvForTests/large.csv')->total());
-    }
-
-    /**
-     * @throws EmptyFileException
-     * @throws MissedFileException
-     * @throws \League\Csv\Exception
-     * @throws InvalidArgument
-     *
-     * @return void
-     */
-    public function testEncodingIssue()
-    {
-        //TODO required file in wrong(different from utf-8 ?) encoding
-    }
-
-    /**
-     * @throws EmptyFileException
-     * @throws MissedFileException
-     * @throws \League\Csv\Exception
-     * @throws InvalidArgument
-     *
-     * @return void
-     */
-    public function testLineTerminationIssue()
-    {
-        //TODO required to understand what is it
     }
 }
