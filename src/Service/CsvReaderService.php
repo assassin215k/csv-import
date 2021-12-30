@@ -10,6 +10,7 @@ namespace App\Service;
 
 use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
+use App\Exception\ReadNotInitializedException;
 use App\Exception\WrongCsvHeadersException;
 use App\Misc\CsvRow;
 use Exception;
@@ -23,14 +24,25 @@ use League\Csv\TabularDataReader;
  */
 class CsvReaderService
 {
+    private bool $prepared = false;
+    private Reader $reader;
+    private array $headers;
+    private Statement $statement;
+
     /**
      * @throws EmptyFileException
-     * @throws MissedFileException
      * @throws InvalidArgument
+     * @throws MissedFileException
+     * @throws WrongCsvHeadersException
      * @throws \League\Csv\Exception
-     * @throws Exception
+     *
+     * @param array  $targetHeaders
+     * @param string $fileName
+     * @param string $delimiter
+     *
+     * @return int
      */
-    public function read(string $fileName, string $delimiter, array $targetHeaders = []): TabularDataReader
+    public function init(string $fileName, string $delimiter, array $targetHeaders = []): int
     {
         if (empty($targetHeaders)) {
             $targetHeaders = CsvRow::$headers;
@@ -38,18 +50,35 @@ class CsvReaderService
 
         self::checkFile($fileName);
 
-        $csv = Reader::createFromPath($fileName);
+        $this->reader = Reader::createFromPath($fileName);
 
-        $csv->setDelimiter($delimiter);
-        $csv->setHeaderOffset(0);
+        $this->reader->setDelimiter($delimiter);
+        $this->reader->setHeaderOffset(0);
 
-        $headers = $csv->getHeader();
+        $this->headers = $this->reader->getHeader();
 
-        if (count(array_diff($targetHeaders, $headers))) {
+        if (count(array_diff($targetHeaders, $this->headers))) {
             throw new WrongCsvHeadersException();
         }
 
-        return Statement::create()->process($csv, $headers);
+        $this->statement = Statement::create();
+
+        $this->prepared = true;
+
+        return $this->reader->count();
+    }
+
+    /**
+     * @throws ReadNotInitializedException
+     * @throws \League\Csv\Exception
+     */
+    public function read(int $limit, int $offset = 0): TabularDataReader
+    {
+        if (!$this->prepared) {
+            throw new ReadNotInitializedException();
+        }
+
+        return $this->statement->limit($limit)->offset($offset)->process($this->reader, $this->headers);
     }
 
     /**

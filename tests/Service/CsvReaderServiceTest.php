@@ -10,6 +10,7 @@ namespace App\Tests\Service;
 
 use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
+use App\Exception\ReadNotInitializedException;
 use App\Exception\WrongCsvHeadersException;
 use App\Service\CsvReaderService;
 use League\Csv\Exception;
@@ -23,25 +24,59 @@ class CsvReaderServiceTest extends TestCase
 {
     /**
      * @throws EmptyFileException
-     * @throws MissedFileException
-     * @throws Exception
      * @throws InvalidArgument
+     * @throws MissedFileException
+     * @throws WrongCsvHeadersException
+     * @throws Exception
+     *
+     * @return void
+     */
+    public function testInit()
+    {
+        $service = new CsvReaderService();
+
+        $this->assertGreaterThan(0, $service->init('.info/stock.csv', ','));
+    }
+
+    /**
+     * @throws Exception
+     * @throws ReadNotInitializedException
+     *
+     * @return void
+     */
+    public function testNotInit()
+    {
+        $service = new CsvReaderService();
+
+        $this->expectException(ReadNotInitializedException::class);
+        $service->read(10, 0);
+    }
+
+    /**
+     * @throws EmptyFileException
+     * @throws InvalidArgument
+     * @throws MissedFileException
+     * @throws WrongCsvHeadersException
+     * @throws Exception
+     * @throws ReadNotInitializedException
      *
      * @return void
      */
     public function testRead()
     {
         $service = new CsvReaderService();
-        $reader = $service->read('.info/stock.csv', ',');
+        $service->init('.info/stock.csv', ',');
+        $result = $service->read(10);
 
-        $this->assertGreaterThan(0, $reader->count());
+        $this->assertGreaterThan(0, count($result));
     }
 
     /**
      * @throws EmptyFileException
-     * @throws MissedFileException
      * @throws Exception
      * @throws InvalidArgument
+     * @throws MissedFileException
+     * @throws WrongCsvHeadersException
      *
      * @return void
      */
@@ -49,16 +84,17 @@ class CsvReaderServiceTest extends TestCase
     {
         $service = new CsvReaderService();
 
-        $reader = $service->read('./tests/csvForTests/delimiter.csv', '|');
+        $count = $service->init('./tests/csvForTests/delimiter.csv', '|');
 
-        $this->assertGreaterThan(0, $reader->count());
+        $this->assertGreaterThan(0, $count);
     }
 
     /**
      * @throws EmptyFileException
-     * @throws MissedFileException
      * @throws Exception
      * @throws InvalidArgument
+     * @throws MissedFileException
+     * @throws WrongCsvHeadersException
      *
      * @return void
      */
@@ -66,9 +102,9 @@ class CsvReaderServiceTest extends TestCase
     {
         $service = new CsvReaderService();
 
-        $reader = $service->read('./tests/csvForTests/quotes.csv', ',');
+        $count = $service->init('./tests/csvForTests/quotes.csv', ',');
 
-        $this->assertGreaterThan(0, $reader->count());
+        $this->assertGreaterThan(0, $count);
     }
 
     /**
@@ -85,14 +121,15 @@ class CsvReaderServiceTest extends TestCase
 
         $this->expectException(WrongCsvHeadersException::class);
 
-        $service->read('./tests/csvForTests/stock.csv', ',', ['someHeader']);
+        $service->init('./tests/csvForTests/stock.csv', ',', ['someHeader']);
     }
 
     /**
      * @throws EmptyFileException
-     * @throws MissedFileException
      * @throws Exception
      * @throws InvalidArgument
+     * @throws MissedFileException
+     * @throws WrongCsvHeadersException
      *
      * @return void
      */
@@ -102,14 +139,15 @@ class CsvReaderServiceTest extends TestCase
 
         $this->expectException(MissedFileException::class);
 
-        $service->read('/wrong.csv', ',');
+        $service->init('/wrong.csv', ',');
     }
 
     /**
      * @throws EmptyFileException
-     * @throws MissedFileException
      * @throws Exception
      * @throws InvalidArgument
+     * @throws MissedFileException
+     * @throws WrongCsvHeadersException
      *
      * @return void
      */
@@ -119,14 +157,15 @@ class CsvReaderServiceTest extends TestCase
 
         $this->expectException(EmptyFileException::class);
 
-        $service->read('./tests/csvForTests/empty.csv', ',');
+        $service->init('./tests/csvForTests/empty.csv', ',');
     }
 
     /**
      * @throws EmptyFileException
-     * @throws MissedFileException
      * @throws Exception
      * @throws InvalidArgument
+     * @throws MissedFileException
+     * @throws WrongCsvHeadersException
      *
      * @return void
      */
@@ -136,6 +175,6 @@ class CsvReaderServiceTest extends TestCase
 
         $this->expectException(WrongCsvHeadersException::class);
 
-        $service->read('./tests/csvForTests/no_headers.csv', ',');
+        $service->init('./tests/csvForTests/no_headers.csv', ',');
     }
 }
