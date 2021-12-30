@@ -6,7 +6,6 @@ services:
     image: mysql
     container_name: mysql
     command: --default-authentication-plugin=mysql_native_password
-    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: pass
     ports:
@@ -14,11 +13,8 @@ services:
 
   php:
     container_name: php
-    build: ./.docker/php
-    restart: unless-stopped
-    user: "1001:1001"
+    build: .
     volumes:
-      - /etc/passwd:/etc/passwd:ro
-      - /etc/group:/etc/group:ro
-      - /home/${USER}/:/home/${USER}/
-      - /tmp/:/tmp/
+      - ./:/app
+    depends_on:
+      - mysql

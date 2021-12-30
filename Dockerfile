@@ -14,7 +14,6 @@ RUN apt update \
 RUN pecl install pcov && \
 docker-php-ext-enable pcov
 
-
 RUN docker-php-ext-install mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets\
     && docker-php-ext-enable mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets xdebug
 
@@ -32,6 +31,9 @@ RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar && chmod +x 
     && curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar && chmod +x ./phpcbf.phar && mv ./phpcbf.phar /usr/local/bin/phpcbf
 
 # latest composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin
 
-CMD [ "php-fpm" ]
+RUN curl -sS https://get.symfony.com/cli/installer | bash
+RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+
+WORKDIR /app

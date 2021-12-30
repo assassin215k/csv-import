@@ -88,18 +88,6 @@ class PriceConstraintValidatorTest extends TestCase
     }
 
     /**
-     * @return MockInterface|ConstraintViolationBuilder|LegacyMockInterface
-     */
-    private function getMockConstraintViolationBuilder(): MockInterface|ConstraintViolationBuilder|LegacyMockInterface
-    {
-        $builder = Mockery::mock(ConstraintViolationBuilder::class);
-        $builder->shouldReceive('setParameter')->andReturn($builder);
-        $builder->shouldReceive('addViolation');
-
-        return $builder;
-    }
-
-    /**
      * @dataProvider priceValidProvider
      *
      * @throws Exception
@@ -139,5 +127,17 @@ class PriceConstraintValidatorTest extends TestCase
             [1.5, 11],
             [20, 1],
         ];
+    }
+
+    /**
+     * @return MockInterface|ConstraintViolationBuilder|LegacyMockInterface
+     */
+    private function getMockConstraintViolationBuilder(): MockInterface|ConstraintViolationBuilder|LegacyMockInterface
+    {
+        $builder = Mockery::mock(ConstraintViolationBuilder::class);
+        $builder->shouldReceive('setParameter')->andReturn($builder);
+        $builder->shouldReceive('addViolation');
+
+        return $builder;
     }
 }

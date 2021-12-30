@@ -1,7 +1,4 @@
 {
-    "assassin215k/phpcs-pre-commit-hook": {
-        "version": "1.0"
-    },
     "behat/transliterator": {
         "version": "v1.3.0"
     },
