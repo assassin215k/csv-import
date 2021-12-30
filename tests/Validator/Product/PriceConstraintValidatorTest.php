@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 28.12.21
- * Time: 11:50
+ * Time: 11:50.
  */
 
 namespace App\Tests\Validator\Product;
@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 
 /**
- * CustomConstraintValidatorTest
+ * CustomConstraintValidatorTest.
  */
 class PriceConstraintValidatorTest extends TestCase
 {
@@ -92,9 +92,6 @@ class PriceConstraintValidatorTest extends TestCase
      *
      * @throws Exception
      *
-     * @param float $cost
-     * @param int   $stock
-     *
      * @return void
      */
     public function testValidEntity(float $cost, int $stock)
@@ -117,9 +114,6 @@ class PriceConstraintValidatorTest extends TestCase
         $this->assertEquals(0, count($constraintViolationList));
     }
 
-    /**
-     * @return array
-     */
     public function priceValidProvider(): array
     {
         return [
@@ -129,9 +123,6 @@ class PriceConstraintValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * @return MockInterface|ConstraintViolationBuilder|LegacyMockInterface
-     */
     private function getMockConstraintViolationBuilder(): MockInterface|ConstraintViolationBuilder|LegacyMockInterface
     {
         $builder = Mockery::mock(ConstraintViolationBuilder::class);

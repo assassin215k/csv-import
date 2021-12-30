@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 22.12.21
- * Time: 22:04
+ * Time: 22:04.
  */
 
 namespace App\Exception;
@@ -12,11 +12,10 @@ use Exception;
 use JetBrains\PhpStorm\Pure;
 
 /**
- * EmptyFileException
+ * EmptyFileException.
  */
 class EmptyFileException extends Exception
 {
-
     protected $message = "File '%s' is empty!";
 
     /**

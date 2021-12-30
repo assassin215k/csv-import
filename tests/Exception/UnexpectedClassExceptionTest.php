@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 28.12.21
- * Time: 13:33
+ * Time: 13:33.
  */
 
 namespace App\Tests\Exception;
@@ -12,7 +12,7 @@ use App\Exception\UnexpectedClassException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * UnexpectedClassExceptionTest
+ * UnexpectedClassExceptionTest.
  */
 class UnexpectedClassExceptionTest extends TestCase
 {

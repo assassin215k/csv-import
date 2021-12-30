@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 27.12.21
- * Time: 13:37
+ * Time: 13:37.
  */
 
 namespace App\Tests\Entity;
@@ -15,14 +15,10 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 
 /**
- * ProductTest
+ * ProductTest.
  */
 class ProductTest extends AbstractDatabaseCase
 {
-
-    /**
-     * @return void
-     */
     public function testToStringClass(): void
     {
         $product = new Product();
@@ -34,8 +30,6 @@ class ProductTest extends AbstractDatabaseCase
     /**
      * @throws ORMException
      * @throws OptimisticLockException
-     *
-     * @return void
      */
     public function testGettersAndSetters(): void
     {

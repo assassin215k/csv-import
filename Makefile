@@ -33,7 +33,7 @@ kill: # Remove dockers
 
 clean: kill ## Stop the project and remove dockers and vendors
 
-reinstall: vendor-remove clean install ## Just reinstall from scratch
+reinstall: vendor-remove clean install precommit ## Just reinstall from scratch
 
 vendor-remove: ## Install vendors
 	$(EXEC_PHP) rm -rf var vendor
@@ -73,36 +73,33 @@ run: ## Prepare DB and run migrations
 ## Code quality control
 ## ----------------------
 
-check: phpunit psalm php-cs-fixer phpmd dephpend lint-yaml composer-validate composer-require-checker ## Запустить все проверки качества кода
+check: phpunit psalm php-cs-fixer lint-yaml composer-validate ## Запустить все проверки качества кода
 
 phpunit: ## Запустить тесты PHPUnit (https://phpunit.de/)
-	$(EXEC_PHP) ./vendor/bin/simple-phpunit --coverage-html xHTML
+	$(EXEC_PHP) ./vendor/bin/simple-phpunit tests/ --coverage-html xHTML
 
 lint-yaml: ## Проверить YAML-файлы при помощи Symfony YAML linter (https://symfony.com/doc/current/components/yaml.html#syntax-validation)
 	$(SYMFONY) lint:yaml config --parse-tags
 
 php-cs-fixer: ## Проверить PHP code style при помощи PHP CS Fixer (https://github.com/FriendsOfPHP/PHP-CS-Fixer)
-	$(EXEC_PHP) php-cs-fixer fix --allow-risky=yes --dry-run --diff --verbose
+	$(EXEC_PHP) ./vendor/bin/php-cs-fixer fix --allow-risky=yes --dry-run --diff --verbose
 
 php-cs-fixer-fix: ## Исправить ошибки PHP code style при помощи PHP CS Fixer (https://github.com/FriendsOfPHP/PHP-CS-Fixer)
-	$(EXEC_PHP) php-cs-fixer fix --allow-risky=yes --verbose
+	$(EXEC_PHP) ./vendor/bin/php-cs-fixer fix --allow-risky=yes --verbose
 
 psalm: ## Запустить статический анализ PHP кода при помощи Psalm (https://psalm.dev/)
-	$(EXEC_PHP) psalm
+	$(EXEC_PHP) ./vendor/bin/psalm
 
-dephpend: ## Проверить код на нарушения архитектуры при помощи dePHPend (https://dephpend.com/)
-	$(EXEC_PHP) bin/dephpend
+#dephpend: ## Проверить код на нарушения архитектуры при помощи dePHPend (https://dephpend.com/)
+#	$(EXEC_PHP) bin/dephpend
 
-phpmd: ## Проанализировать PHP код при помощи PHPMD (https://phpmd.org/)
-	$(EXEC_PHP) phpmd src json phpmd.xml
+#phpmd: ## Проанализировать PHP код при помощи PHPMD (https://phpmd.org/)
+#	$(EXEC_PHP) phpmd src json phpmd.xml
 
 composer-validate: ## Провалидировать composer.json и composer.lock при помощи встроенного в Composer валидатора
 	$(COMPOSER) validate
 
-composer-require-checker: ## Обнаружить неявные зависимости от внешних пакетов при помощи ComposerRequireChecker (https://github.com/maglnet/ComposerRequireChecker)
-	$(EXEC_PHP) composer-require-checker check
-
-.PHONY: check phpunit lint-yaml php-cs-fixer php-cs-fixer-fix psalm dephpend phpmd composer-validate composer-require-checker
+.PHONY: check phpunit psalm php-cs-fixer lint-yaml composer-validate
 
 #
 # Вспомогательные рецепты

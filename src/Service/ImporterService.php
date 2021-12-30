@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 14.12.21
- * Time: 16:45
+ * Time: 16:45.
  */
 
 namespace App\Service;
@@ -19,11 +19,10 @@ use League\Csv\Exception as CsvException;
 use League\Csv\InvalidArgument;
 
 /**
- * ImporterService to read csv and import to DB
+ * ImporterService to read csv and import to DB.
  */
 class ImporterService
 {
-
     private ProductRepository $repository;
 
     /**
@@ -33,7 +32,7 @@ class ImporterService
      */
     public function __construct(private CsvReaderService $reader, private ValidatorService $validator, private EntityManagerInterface $manager)
     {
-        $this->repository = $this->manager->getRepository('App:Product');
+        $this->repository = $this->manager->getRepository(Product::class);
     }
 
     /**
@@ -41,11 +40,6 @@ class ImporterService
      * @throws InvalidArgument
      * @throws EmptyFileException
      * @throws MissedFileException
-     *
-     * @param string $fileName
-     * @param string $delimiter
-     *
-     * @return ImportResponse
      */
     public function import(string $fileName, string $delimiter = ','): ImportResponse
     {
@@ -57,7 +51,7 @@ class ImporterService
         foreach ($reader->getRecords() as $key => $record) {
             $this->addProduct($key, $record, $response, $productCodes);
 
-            if ($key % 10 === 0) {
+            if (0 === $key % 10) {
                 $this->manager->flush();
             }
         }
@@ -70,11 +64,6 @@ class ImporterService
     }
 
     /**
-     * @param int            $key
-     * @param array          $record
-     * @param ImportResponse $response
-     * @param array          $codes
-     *
      * @return void
      */
     private function addProduct(int $key, array $record, ImportResponse $response, array &$codes)
@@ -95,16 +84,11 @@ class ImporterService
 
         $this->manager->persist($product);
 
-        $response->successItems++;
+        ++$response->successItems;
 
         $codes[] = $product->getCode();
     }
 
-    /**
-     * @param array $record
-     *
-     * @return Product
-     */
     private function makeProduct(array $record): Product
     {
         $code = $record[CsvRow::CODE];

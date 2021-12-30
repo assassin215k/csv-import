@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 21.12.21
- * Time: 18:29
+ * Time: 18:29.
  */
 
 namespace App\Validator\Product;
@@ -16,16 +16,12 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
- * Custom validator
+ * Custom validator.
  */
 class PriceConstraintValidator extends ConstraintValidator
 {
-
     /**
      * @throws Exception
-     *
-     * @param mixed      $value
-     * @param Constraint $constraint
      */
     public function validate(mixed $value, Constraint $constraint)
     {

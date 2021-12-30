@@ -3,25 +3,22 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 29.12.21
- * Time: 12:20
+ * Time: 12:20.
  */
 
 namespace App\Tests\Command;
 
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- * ImportCommandTest
+ * ImportCommandTest.
  */
 class ImportCommandTest extends KernelTestCase
 {
     private CommandTester $tester;
 
-    /**
-     * @return void
-     */
     public function setUp(): void
     {
         $kernel = self::bootKernel();

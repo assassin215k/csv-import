@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 28.12.21
- * Time: 13:27
+ * Time: 13:27.
  */
 
 namespace App\Tests\Exception;
@@ -12,7 +12,7 @@ use App\Exception\EmptyFileException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * EmptyFileExceptionTest
+ * EmptyFileExceptionTest.
  */
 class EmptyFileExceptionTest extends TestCase
 {

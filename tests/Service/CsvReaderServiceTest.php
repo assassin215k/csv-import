@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 28.12.21
- * Time: 14:55
+ * Time: 14:55.
  */
 
 namespace App\Tests\Service;
@@ -17,7 +17,7 @@ use League\Csv\InvalidArgument;
 use PHPUnit\Framework\TestCase;
 
 /**
- * CsvReaderServiceTest
+ * CsvReaderServiceTest.
  */
 class CsvReaderServiceTest extends TestCase
 {
@@ -137,21 +137,5 @@ class CsvReaderServiceTest extends TestCase
         $this->expectException(WrongCsvHeadersException::class);
 
         $service->read('./tests/csvForTests/no_headers.csv', ',');
-    }
-
-    /**
-     * @return void
-     */
-    public function testEncodingIssue()
-    {
-        //TODO required file in wrong(different from utf-8 ?) encoding
-    }
-
-    /**
-     * @return void
-     */
-    public function testLineTerminationIssue()
-    {
-        //TODO required to understand what is it
     }
 }

@@ -1,9 +1,30 @@
 {
+    "amphp/amp": {
+        "version": "v2.6.1"
+    },
+    "amphp/byte-stream": {
+        "version": "v1.8.1"
+    },
+    "assassin215k/phpcs-pre-commit-hook": {
+        "version": "1.0"
+    },
     "behat/transliterator": {
         "version": "v1.3.0"
     },
     "composer/package-versions-deprecated": {
         "version": "1.11.99.4"
+    },
+    "composer/pcre": {
+        "version": "1.0.0"
+    },
+    "composer/semver": {
+        "version": "3.2.6"
+    },
+    "composer/xdebug-handler": {
+        "version": "2.0.3"
+    },
+    "dnoegel/php-xdg-base-dir": {
+        "version": "v0.1.1"
     },
     "doctrine/annotations": {
         "version": "1.13",
@@ -88,6 +109,24 @@
     "escapestudios/symfony2-coding-standard": {
         "version": "3.x-dev"
     },
+    "felixfbecker/advanced-json-rpc": {
+        "version": "v3.2.1"
+    },
+    "felixfbecker/language-server-protocol": {
+        "version": "1.5.1"
+    },
+    "friendsofphp/php-cs-fixer": {
+        "version": "3.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "be2103eb4a20942e28a6dd87736669b757132435"
+        },
+        "files": [
+            ".php-cs-fixer.dist.php"
+        ]
+    },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
@@ -97,11 +136,17 @@
     "hamcrest/hamcrest-php": {
         "version": "v2.0.1"
     },
+    "jetbrains/phpstorm-attributes": {
+        "version": "1.0"
+    },
     "laminas/laminas-code": {
         "version": "4.5.0"
     },
     "league/csv": {
         "version": "9.7.4"
+    },
+    "maglnet/composer-require-checker": {
+        "version": "4.0.0"
     },
     "mockery/mockery": {
         "version": "1.4.4"
@@ -112,14 +157,23 @@
     "myclabs/deep-copy": {
         "version": "1.10.2"
     },
+    "netresearch/jsonmapper": {
+        "version": "v4.0.0"
+    },
     "nikic/php-parser": {
         "version": "v4.13.2"
+    },
+    "openlss/lib-array2xml": {
+        "version": "1.0.0"
     },
     "phar-io/manifest": {
         "version": "2.0.3"
     },
     "phar-io/version": {
         "version": "3.1.0"
+    },
+    "php-cs-fixer/diff": {
+        "version": "v2.0.2"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
@@ -352,6 +406,9 @@
             "config/packages/test/monolog.yaml"
         ]
     },
+    "symfony/options-resolver": {
+        "version": "v6.0.0"
+    },
     "symfony/phpunit-bridge": {
         "version": "6.0",
         "recipe": {
@@ -381,6 +438,9 @@
     },
     "symfony/polyfill-php81": {
         "version": "v1.23.0"
+    },
+    "symfony/process": {
+        "version": "v6.0.2"
     },
     "symfony/proxy-manager-bridge": {
         "version": "v5.4.0"
@@ -438,7 +498,16 @@
     "theseer/tokenizer": {
         "version": "1.2.1"
     },
+    "vimeo/psalm": {
+        "version": "4.16.1"
+    },
     "webmozart/assert": {
         "version": "1.10.0"
+    },
+    "webmozart/glob": {
+        "version": "4.4.0"
+    },
+    "webmozart/path-util": {
+        "version": "2.3.0"
     }
 }

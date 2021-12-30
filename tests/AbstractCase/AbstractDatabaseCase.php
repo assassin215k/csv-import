@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 28.12.21
- * Time: 16:03
+ * Time: 16:03.
  */
 
 namespace App\Tests\AbstractCase;
@@ -14,7 +14,7 @@ use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
- * AbstractDatabaseCase
+ * AbstractDatabaseCase.
  */
 class AbstractDatabaseCase extends KernelTestCase
 {
@@ -23,8 +23,6 @@ class AbstractDatabaseCase extends KernelTestCase
     /**
      * @throws Exception
      * @throws ORMException
-     *
-     * @return void
      */
     public function setUp(): void
     {
@@ -33,9 +31,6 @@ class AbstractDatabaseCase extends KernelTestCase
         $this->manager->beginTransaction();
     }
 
-    /**
-     * @return void
-     */
     public function tearDown(): void
     {
         $this->manager->rollback();

@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 28.12.21
- * Time: 13:35
+ * Time: 13:35.
  */
 
 namespace App\Tests\Exception;
@@ -12,7 +12,7 @@ use App\Exception\WrongCsvHeadersException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * WrongCsvHeadersExceptionTest
+ * WrongCsvHeadersExceptionTest.
  */
 class WrongCsvHeadersExceptionTest extends TestCase
 {
