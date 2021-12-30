@@ -16,7 +16,7 @@ use JetBrains\PhpStorm\Pure;
  */
 class ReadNotInitializedException extends Exception
 {
-    protected $message = "Reader is not initialized. User init method";
+    protected $message = 'Reader is not initialized. User init method';
 
     /**
      * Exception constructor.

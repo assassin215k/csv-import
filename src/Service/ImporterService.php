@@ -42,11 +42,6 @@ class ImporterService
      * @throws InvalidArgument
      * @throws MissedFileException
      * @throws ReadNotInitializedException
-     *
-     * @param string $delimiter
-     * @param string $fileName
-     *
-     * @return ImportResponse
      */
     public function import(string $fileName, string $delimiter = ','): ImportResponse
     {
@@ -63,7 +58,7 @@ class ImporterService
         $productCodes = [];
         while (count($records)) {
             foreach ($records as $key => $record) {
-                $this->addProduct($offset+$key, $record, $response, $productCodes);
+                $this->addProduct($offset + $key, $record, $response, $productCodes);
             }
 
             $this->manager->flush();

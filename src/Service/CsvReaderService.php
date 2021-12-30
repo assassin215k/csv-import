@@ -13,7 +13,6 @@ use App\Exception\MissedFileException;
 use App\Exception\ReadNotInitializedException;
 use App\Exception\WrongCsvHeadersException;
 use App\Misc\CsvRow;
-use Exception;
 use League\Csv\InvalidArgument;
 use League\Csv\Reader;
 use League\Csv\Statement;
@@ -35,12 +34,6 @@ class CsvReaderService
      * @throws MissedFileException
      * @throws WrongCsvHeadersException
      * @throws \League\Csv\Exception
-     *
-     * @param array  $targetHeaders
-     * @param string $fileName
-     * @param string $delimiter
-     *
-     * @return int
      */
     public function init(string $fileName, string $delimiter, array $targetHeaders = []): int
     {
