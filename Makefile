@@ -97,7 +97,7 @@ psalm: ## Запустить статический анализ PHP кода п
 #	$(EXEC_PHP) phpmd src json phpmd.xml
 
 lint-php: ## Проверить YAML-файлы при помощи Symfony YAML linter (https://symfony.com/doc/current/components/yaml.html#syntax-validation)
-	$(EXEC_PHP) ./vendor/bin/phplint $(FILE) --exclude=vendor
+	$(EXEC_PHP) ./vendor/bin/phplint $(FILE)
 
 composer-validate: ## Провалидировать composer.json и composer.lock при помощи встроенного в Composer валидатора
 	$(COMPOSER) validate
