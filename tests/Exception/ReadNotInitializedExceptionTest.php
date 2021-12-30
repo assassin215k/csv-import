@@ -23,6 +23,6 @@ class ReadNotInitializedExceptionTest extends TestCase
     {
         $exception = new ReadNotInitializedException();
 
-        $this->assertSame("Reader is not initialized. User init method", $exception->getMessage());
+        $this->assertSame('Reader is not initialized. User init method', $exception->getMessage());
     }
 }
