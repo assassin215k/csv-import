@@ -51,7 +51,7 @@ class ImporterService
         foreach ($reader->getRecords() as $key => $record) {
             $this->addProduct($key, $record, $response, $productCodes);
 
-            if (0 === $key % 10) {
+            if (0 === $key % 100) {
                 $this->manager->flush();
             }
         }
