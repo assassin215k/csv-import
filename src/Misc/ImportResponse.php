@@ -3,13 +3,13 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 29.12.21
- * Time: 09:02
+ * Time: 09:02.
  */
 
 namespace App\Misc;
 
 /**
- * ImportResponse
+ * ImportResponse.
  */
 class ImportResponse
 {
@@ -18,9 +18,6 @@ class ImportResponse
     public array $skippedString = [];
     public array $invalidCode = [];
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         $response = "=====\r\n";
@@ -28,14 +25,14 @@ class ImportResponse
 
         $skipped = count($this->skippedString);
         if ($skipped) {
-            $response .= "Skipped line numbers: ";
-            $response .= join(",", $this->skippedString)."\r\n";
+            $response .= 'Skipped line numbers: ';
+            $response .= join(',', $this->skippedString)."\r\n";
         }
 
         $invalid = count($this->invalidCode);
         if ($invalid) {
-            $response .= "Invalid codes: ";
-            $response .= join(",", $this->invalidCode)."\r\n";
+            $response .= 'Invalid codes: ';
+            $response .= join(',', $this->invalidCode)."\r\n";
         }
 
         $response .= "=====\r\n";
@@ -47,9 +44,6 @@ class ImportResponse
         return $response;
     }
 
-    /**
-     * @return int
-     */
     public function total(): int
     {
         return $this->successItems + count($this->invalidCode) + count($this->skippedString);

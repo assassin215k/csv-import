@@ -14,9 +14,9 @@ use JetBrains\PhpStorm\Pure;
 /**
  * WrongCsvHeadersException.
  */
-class WrongCsvHeadersException extends Exception
+class ReadNotInitializedException extends Exception
 {
-    protected $message = "Headers didn't match!";
+    protected $message = "Reader is not initialized. User init method";
 
     /**
      * Exception constructor.

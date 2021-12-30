@@ -1,28 +1,16 @@
-## Install dockers
+## Project run
 
-1. Open terminal and go to project directory
-2. run ```chmod +x .docker/docker-install.sh``` to make file executable
-3. and run ```sudo .docker/docker-install.sh``` to install docker, build containers and link commands to containers
+### Pre Required
+Installed docker on machine
+####Attention! 
+Tested only on linux systems
 
-### Attention!
-Old docker and containers will be removed 
-After build new will be copied commands to ```/usr/bin``` and ```/usr/local/bin``` and it can erase your current commands  
-Required reboot after first installation
-
-#### Check installation
-check php by run ```php -v``` and composer by run ```composer --version```
-
-#### Run symfony
-1. make database using ./info/make_database.sql
-2. Run migrations by ```php bin/console doctrine:migrations:migrate```
-3. in console run command php bin/console app:csv-import ./.info/stock.csv
+#### To run:
+* use command make: ```make install``` to build containers, created and migrate DB
+* to import use command ```make run file="./.info/stock.csv"```
 
 ### Code standard
-To use Symfony standard import ```.editconfig``` in ```File -> Settings -> Editor -> Code Style -> PHP```
-
-### Run import command
-To run import use ```php bin/console app:csv-import ./.info/stock.csv``` command
-where ```./.info/stock.csv``` is the path to your csv file
+Use ```make check``` to run phpunit, psalm, php-cs-fixer, lint-yaml and composer-validate
 
 ### Tests coverage
 To see report open ```./xHTML/index.html``` after tests run

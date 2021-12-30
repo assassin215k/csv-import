@@ -8,21 +8,21 @@
 
 namespace App\Tests\Exception;
 
-use App\Exception\WrongCsvHeadersException;
+use App\Exception\ReadNotInitializedException;
 use PHPUnit\Framework\TestCase;
 
 /**
  * WrongCsvHeadersExceptionTest.
  */
-class WrongCsvHeadersExceptionTest extends TestCase
+class ReadNotInitializedExceptionTest extends TestCase
 {
     /**
      * @return void
      */
     public function testConstruct()
     {
-        $exception = new WrongCsvHeadersException();
+        $exception = new ReadNotInitializedException();
 
-        $this->assertSame("Headers didn't match!", $exception->getMessage());
+        $this->assertSame("Reader is not initialized. User init method", $exception->getMessage());
     }
 }

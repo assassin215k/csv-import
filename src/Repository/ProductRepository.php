@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * Author: Ihor Fedan
+ * Author: Ihor Fedan.
  */
 
 namespace App\Repository;
@@ -18,21 +18,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ProductRepository extends ServiceEntityRepository
 {
-
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Product::class);
     }
 
     /**
-     * Remove products with filter by array of product codes
-     *
-     * @param array $codes
-     *
-     * @return void
+     * Remove products with filter by array of product codes.
      */
     public function removeByCodes(array $codes = []): void
     {

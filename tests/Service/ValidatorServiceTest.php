@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 28.12.21
- * Time: 14:30
+ * Time: 14:30.
  */
 
 namespace App\Tests\Service;
@@ -13,11 +13,10 @@ use App\Service\ValidatorService;
 use PHPUnit\Framework\TestCase;
 
 /**
- * ValidatorServiceTest
+ * ValidatorServiceTest.
  */
 class ValidatorServiceTest extends TestCase
 {
-
     /**
      * @return void
      */

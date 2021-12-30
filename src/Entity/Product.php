@@ -1,17 +1,16 @@
 <?php
 /**
  * Created by PhpStorm.
- * Author: Ihor Fedan
+ * Author: Ihor Fedan.
  */
 
 namespace App\Entity;
 
 use DateTime;
 use DateTimeInterface;
-use JetBrains\PhpStorm\Pure;
 
 /**
- * Product entity to import
+ * Product entity to import.
  */
 class Product implements PriceConstraintInterface
 {
@@ -34,7 +33,7 @@ class Product implements PriceConstraintInterface
     private ?DateTimeInterface $updateAt;
 
     /**
-     * Set first value for timestampable fields
+     * Set first value for timestampable fields.
      */
     public function __construct()
     {
@@ -42,33 +41,22 @@ class Product implements PriceConstraintInterface
         $this->updateAt = new DateTime();
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->code ?? '';
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name ?? '';
     }
 
     /**
-     * @param string $name
-     *
      * @return $this
      */
     public function setName(string $name): self
@@ -78,17 +66,12 @@ class Product implements PriceConstraintInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description ?? '';
     }
 
     /**
-     * @param string $description
-     *
      * @return $this
      */
     public function setDescription(string $description): self
@@ -98,17 +81,12 @@ class Product implements PriceConstraintInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCode(): string
     {
         return $this->code ?? '';
     }
 
     /**
-     * @param string $code
-     *
      * @return $this
      */
     public function setCode(string $code): self
@@ -118,17 +96,12 @@ class Product implements PriceConstraintInterface
         return $this;
     }
 
-    /**
-     * @return DateTimeInterface|null
-     */
     public function getDiscontinued(): ?DateTimeInterface
     {
         return $this->discontinued;
     }
 
     /**
-     * @param bool $discontinued
-     *
      * @return $this
      */
     public function setDiscontinued(bool $discontinued): self
@@ -138,19 +111,11 @@ class Product implements PriceConstraintInterface
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getCost(): float
     {
         return $this->cost ?? 0;
     }
 
-    /**
-     * @param float $cost
-     *
-     * @return Product
-     */
     public function setCost(float $cost): Product
     {
         $this->cost = $cost;
@@ -158,19 +123,11 @@ class Product implements PriceConstraintInterface
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getStock(): int
     {
         return $this->stock ?? 0;
     }
 
-    /**
-     * @param int $stock
-     *
-     * @return Product
-     */
     public function setStock(int $stock): Product
     {
         $this->stock = $stock;

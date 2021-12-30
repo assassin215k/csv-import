@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 29.12.21
- * Time: 12:06
+ * Time: 12:06.
  */
 
 namespace App\Tests\Misc;
@@ -12,7 +12,7 @@ use App\Misc\ImportResponse;
 use PHPUnit\Framework\TestCase;
 
 /**
- * ImportResponseTest
+ * ImportResponseTest.
  */
 class ImportResponseTest extends TestCase
 {
@@ -23,7 +23,7 @@ class ImportResponseTest extends TestCase
     {
         $response = new ImportResponse();
 
-        $response->successItems++;
+        ++$response->successItems;
         $response->invalidCode[] = '001';
         $response->skippedString[] = 3;
         $response->skippedString[] = 4;

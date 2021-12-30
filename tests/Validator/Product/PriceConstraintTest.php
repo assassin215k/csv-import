@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * Author: Ihor Fedan
  * Date: 28.12.21
- * Time: 12:54
+ * Time: 12:54.
  */
 
 namespace App\Tests\Validator\Product;
@@ -12,7 +12,7 @@ use App\Validator\Product\PriceConstraint;
 use PHPUnit\Framework\TestCase;
 
 /**
- * CustomConstraintTest
+ * CustomConstraintTest.
  */
 class PriceConstraintTest extends TestCase
 {
