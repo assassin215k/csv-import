@@ -16,7 +16,6 @@
         "friendsofphp/php-cs-fixer": "^3.4",
         "gedmo/doctrine-extensions": "^3.4",
         "league/csv": "^9.7",
-        "overtrue/phplint": "^4.1",
         "symfony/console": "6.0.*",
         "symfony/dotenv": "6.0.*",
         "symfony/flex": "^1.17|^2",
@@ -90,7 +89,8 @@
         "symfony/css-selector": "6.0.*",
         "symfony/maker-bundle": "^1.36",
         "symfony/phpunit-bridge": "^6.0",
-        "vimeo/psalm": "^4.16"
+        "vimeo/psalm": "^4.16",
+        "overtrue/phplint": "^4.1"
     },
     "repositories": {
         "phpcs-pre-commit-hook": {
