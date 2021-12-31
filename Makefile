@@ -64,48 +64,42 @@ db: vendor ## Prepare DB and run migrations
 
 .PHONY: db
 
-run: ## Prepare DB and run migrations
+run: ## Run csv import command. Use 'make run file=<filepath>'
 	$(SYMFONY) app:csv-import $(file)
 
-.PHONY: symfony
+.PHONY: run
 
 ##
 ## Code quality control
 ## ----------------------
 
-check: phpunit psalm php-cs-fixer lint-yaml composer-validate ## Запустить все проверки качества кода
+check: phpunit psalm php-cs-fixer lint-yaml composer-validate ## Run all checks and validations
 
-phpunit: ## Запустить тесты PHPUnit (https://phpunit.de/)
+phpunit: ## Run PHPUnit test (https://phpunit.de/)
 	$(EXEC_PHP) ./vendor/bin/simple-phpunit tests/ --coverage-html xHTML
 
-lint-yaml: ## Проверить YAML-файлы при помощи Symfony YAML linter (https://symfony.com/doc/current/components/yaml.html#syntax-validation)
+lint-yaml: ## Check YAML files by Symfony YAML linter (https://symfony.com/doc/current/components/yaml.html#syntax-validation)
 	$(SYMFONY) lint:yaml config --parse-tags
 
-php-cs-fixer: ## Проверить PHP code style при помощи PHP CS Fixer (https://github.com/FriendsOfPHP/PHP-CS-Fixer)
+php-cs-fixer: ## Check PHP code style by PHP CS Fixer (https://github.com/FriendsOfPHP/PHP-CS-Fixer)
 	$(EXEC_PHP) ./vendor/bin/php-cs-fixer fix --allow-risky=yes --dry-run --diff --verbose
 
-php-cs-fixer-fix: ## Исправить ошибки PHP code style при помощи PHP CS Fixer (https://github.com/FriendsOfPHP/PHP-CS-Fixer)
+php-cs-fixer-fix: ## Fix PHP code style by PHP CS Fixer (https://github.com/FriendsOfPHP/PHP-CS-Fixer)
 	$(EXEC_PHP) ./vendor/bin/php-cs-fixer fix --allow-risky=yes --verbose
 
-psalm: ## Запустить статический анализ PHP кода при помощи Psalm (https://psalm.dev/)
+psalm: ## Run PHP code check by Psalm (https://psalm.dev/)
 	$(EXEC_PHP) ./vendor/bin/psalm
 
-#dephpend: ## Проверить код на нарушения архитектуры при помощи dePHPend (https://dephpend.com/)
-#	$(EXEC_PHP) bin/dephpend
-
-#phpmd: ## Проанализировать PHP код при помощи PHPMD (https://phpmd.org/)
-#	$(EXEC_PHP) phpmd src json phpmd.xml
-
-lint-php: ## Проверить YAML-файлы при помощи Symfony YAML linter (https://symfony.com/doc/current/components/yaml.html#syntax-validation)
+lint-php: ## Check PHP files by phplint (https://github.com/overtrue/phplint)
 	$(EXEC_PHP) ./vendor/bin/phplint $(FILE)
 
-composer-validate: ## Провалидировать composer.json и composer.lock при помощи встроенного в Composer валидатора
+composer-validate: ## Self composer validate of composer.json and composer.lock
 	$(COMPOSER) validate
 
 .PHONY: check phpunit psalm php-cs-fixer lint-yaml composer-validate
 
 #
-# Вспомогательные рецепты
+# Additional
 # -----------------------
 
 help: ## This help
