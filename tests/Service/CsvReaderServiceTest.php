@@ -12,7 +12,7 @@ use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
 use App\Exception\ReadNotInitializedException;
 use App\Exception\WrongCsvHeadersException;
-use App\Service\CsvReaderService;
+use App\Service\CsvReader\CsvReaderService;
 use League\Csv\Exception;
 use League\Csv\InvalidArgument;
 use PHPUnit\Framework\TestCase;

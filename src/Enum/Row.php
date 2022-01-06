@@ -6,12 +6,12 @@
  * Time: 08:44.
  */
 
-namespace App\Misc;
+namespace App\Enum;
 
 /**
  * Class to description csv file header.
  */
-class CsvRow
+enum Row: string
 {
     public const CODE = 'Product Code';
     public const NAME = 'Product Name';
@@ -20,12 +20,15 @@ class CsvRow
     public const COST = 'Cost in GBP';
     public const DISC = 'Discontinued';
 
-    public static array $headers = [
-        self::CODE,
-        self::NAME,
-        self::DESC,
-        self::STOCK,
-        self::COST,
-        self::DISC,
-    ];
+    public static function getHeaders(): array
+    {
+        return [
+            self::CODE,
+            self::NAME,
+            self::DESC,
+            self::STOCK,
+            self::COST,
+            self::DISC,
+        ];
+    }
 }

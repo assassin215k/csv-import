@@ -12,7 +12,7 @@ use App\Entity\Product;
 use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
 use App\Repository\ProductRepository;
-use App\Service\CsvReaderService;
+use App\Service\CsvReader\CsvReaderService;
 use App\Service\ImporterService;
 use App\Service\ValidatorService;
 use Doctrine\ORM\EntityManager;

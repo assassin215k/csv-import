@@ -19,9 +19,12 @@ endif
 ##
 ## ------
 
-install: start db ## Setup and start the project
+install: build db ## Setup and start the project
 
-start: ## Build and start dockers
+up: ## start dockers
+	$(DOCKER_COMPOSE) up --detach
+
+build: ## Build and start dockers
 	$(DOCKER_COMPOSE) up --build --remove-orphans --force-recreate --detach
 
 stop: ## Stop dockers

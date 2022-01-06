@@ -1,12 +1,19 @@
 FROM php:8.1-fpm
 
 RUN apt update \
-    && apt install -y libxml2-dev libonig-dev libpq-dev \
+    && apt install -y\
+            libonig-dev \
+            libpq-dev \
+            libxml2-dev libpq-dev \
             libzip-dev \
             libfreetype6-dev \
             libjpeg62-turbo-dev \
             libpng-dev \
+            librabbitmq-dev \
+            libssh-dev \
             git
+
+RUN pecl install amqp
 
 RUN apt update \
     && pecl install xdebug
@@ -15,7 +22,7 @@ RUN pecl install pcov && \
 docker-php-ext-enable pcov
 
 RUN docker-php-ext-install mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets\
-    && docker-php-ext-enable mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets xdebug
+    && docker-php-ext-enable mbstring pdo pdo_pgsql pdo_mysql pgsql bcmath gd intl opcache zip soap sockets xdebug amqp
 
 RUN echo 'memory_limit=-1' >> /usr/local/etc/php/conf.d/docker-php-memory_limit.ini;
 RUN echo 'error_reporting=-1' >> /usr/local/etc/php/conf.d/docker-php-error_reporting.ini;

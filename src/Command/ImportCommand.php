@@ -10,6 +10,7 @@ namespace App\Command;
 
 use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
+use App\Exception\ReadNotInitializedException;
 use App\Service\ImporterService;
 use Exception;
 use League\Csv\InvalidArgument;
@@ -60,23 +61,30 @@ class ImportCommand extends Command
             $this->read($input->getArgument('file'), $input->getOption('delimiter'));
         } catch (InvalidArgument $e) {
             $output->writeln('Invalid delimiter specified!');
+
+            return Command::INVALID;
         } catch (Exception $e) {
             $output->writeln($e->getMessage());
+
+            return Command::FAILURE;
         }
 
         return Command::SUCCESS;
     }
 
     /**
-     * @throws InvalidArgument
      * @throws EmptyFileException
+     * @throws InvalidArgument
      * @throws MissedFileException
+     * @throws ReadNotInitializedException
      * @throws \League\Csv\Exception
+     *
+     * @param string $delimiter
+     * @param string $file
      */
     private function read(string $file, string $delimiter): void
     {
         $result = $this->service->import($file, $delimiter);
-
         $this->output->writeln('Report:');
         $this->output->writeln($result);
     }

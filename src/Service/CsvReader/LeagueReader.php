@@ -6,41 +6,42 @@
  * Time: 16:45.
  */
 
-namespace App\Service;
+namespace App\Service\CsvReader;
 
+use App\Enum\Row;
 use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
 use App\Exception\ReadNotInitializedException;
 use App\Exception\WrongCsvHeadersException;
-use App\Misc\CsvRow;
+use Iterator;
+use League\Csv\Exception;
 use League\Csv\InvalidArgument;
 use League\Csv\Reader;
 use League\Csv\Statement;
-use League\Csv\TabularDataReader;
 
 /**
  * CsvReaderService to read csv file and check headers to be identical with target.
  */
-class CsvReaderService
+class LeagueReader implements IReader
 {
     private bool $prepared = false;
     private Reader $reader;
     private array $headers;
     private Statement $statement;
 
+    public function __construct(private readonly int $limit)
+    {
+    }
+
     /**
      * @throws EmptyFileException
      * @throws InvalidArgument
      * @throws MissedFileException
      * @throws WrongCsvHeadersException
-     * @throws \League\Csv\Exception
+     * @throws Exception
      */
-    public function init(string $fileName, string $delimiter, array $targetHeaders = []): int
+    public function init(string $fileName, string $delimiter): int
     {
-        if (empty($targetHeaders)) {
-            $targetHeaders = CsvRow::$headers;
-        }
-
         self::checkFile($fileName);
 
         $this->reader = Reader::createFromPath($fileName);
@@ -49,10 +50,7 @@ class CsvReaderService
         $this->reader->setHeaderOffset(0);
 
         $this->headers = $this->reader->getHeader();
-
-        if (count(array_diff($targetHeaders, $this->headers))) {
-            throw new WrongCsvHeadersException();
-        }
+        $this->checkHeaders();
 
         $this->statement = Statement::create();
 
@@ -63,15 +61,19 @@ class CsvReaderService
 
     /**
      * @throws ReadNotInitializedException
-     * @throws \League\Csv\Exception
+     * @throws Exception
      */
-    public function read(int $limit, int $offset = 0): TabularDataReader
+    public function read(int $page = 1): Iterator
     {
         if (!$this->prepared) {
             throw new ReadNotInitializedException();
         }
 
-        return $this->statement->limit($limit)->offset($offset)->process($this->reader, $this->headers);
+        if ($page < 1) {
+            $page = 1;
+        }
+
+        return $this->statement->limit($this->limit)->offset(($page - 1) * $this->limit)->process($this->reader, $this->headers)->getRecords();
     }
 
     /**
@@ -86,6 +88,16 @@ class CsvReaderService
 
         if (!filesize($fileName)) {
             throw new EmptyFileException($fileName);
+        }
+    }
+
+    /**
+     * @throws WrongCsvHeadersException
+     */
+    private function checkHeaders(): void
+    {
+        if (count(array_diff(Row::getHeaders(), $this->reader->getHeader()))) {
+            throw new WrongCsvHeadersException();
         }
     }
 }
