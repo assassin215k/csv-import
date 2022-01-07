@@ -20,12 +20,16 @@ services:
       - ./:/app
     depends_on:
       - mysql
+      - rabbitmq
+    links:
+      - "rabbitmq:rabbitmq"
 
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.7-management
     environment:
-      MYSQL_ROOT_PASSWORD: pass
+      RABBIT_USER: guest
+      RABBIT_PASSWORD: guest
     ports:
       - "5672:5672"
       - "15672:15672"

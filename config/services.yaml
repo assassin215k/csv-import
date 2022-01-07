@@ -27,4 +27,3 @@ services:
     App\Service\CsvReader\LeagueReader:
         arguments:
             $limit: '%reader.limit%'
-

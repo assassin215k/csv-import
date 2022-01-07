@@ -8,7 +8,7 @@
 
 namespace App\Service;
 
-use App\Message\Row;
+use App\Message\RowMessage;
 use App\Misc\ImportResponse;
 use App\Service\CsvReader\IReader;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -42,11 +42,19 @@ class ImporterService
         $response = new ImportResponse();
 
         while ($records->valid()) {
+            echo "Start page: $page\r\n";
+
             foreach ($records as $key => $record) {
-                $this->bus->dispatch(new Row($record, $key));
+                $envelope = $this->bus->dispatch(new RowMessage($record, $key));
             }
 
+            echo "Queued page: $page\r\n";
+
             $records = $this->reader->read(++$page);
+        }
+
+        if (!empty($envelope)) {
+//            var_dump($envelope->all(HandledStamp::class));
         }
 
         return $response;

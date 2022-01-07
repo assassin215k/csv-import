@@ -8,7 +8,12 @@
 
 namespace App\MessageHandler;
 
-use App\Message\Row;
+use App\Entity\Product;
+use App\Message\RowMessage;
+use App\Repository\ProductRepository;
+use App\Service\ValidatorService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 /**
@@ -16,33 +21,46 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
  */
 class RowHandler implements MessageHandlerInterface
 {
-    public function __invoke(Row $record)
+    /**
+     * @param EntityManagerInterface $manager
+     * @param ProductRepository      $repository
+     * @param ValidatorService       $validator
+     */
+    public function __construct(private EntityManagerInterface $manager, private ProductRepository $repository, private ValidatorService $validator)
     {
-        var_dump($record);
-//        $product = new Product();
-//        $product->setCode($record[CsvRow::CODE]);
-//        $product->setCost((float) $record[CsvRow::COST]);
-//        $product->setName((string) $record[CsvRow::NAME]);
-//        $product->setDescription((string) $record[CsvRow::DESC]);
-//        $product->setStock((int) $record[CsvRow::STOCK]);
-//        $product->setDiscontinued((bool) $record[CsvRow::DISC]);
-//
-//        if (in_array($product->getCode(), $codes)) {
-//            $response->skippedString[] = $key + 1;
-//
-//            return;
-//        }
-//
-//        if (!$this->validator->isValidProduct($product)) {
-//            $response->invalidCode[] = $product->getCode();
-//
-//            return;
-//        }
-//
-//        $this->manager->persist($product);
-//
-//        ++$response->successItems;
-//
-//        $codes[] = $product->getCode();
+    }
+
+    public function __invoke(RowMessage $row)
+    {
+        $product = $this->getProduct($row);
+
+        if (!$this->validator->isValidProduct($product)) {
+            throw new UnrecoverableMessageHandlingException();
+        }
+
+        $this->manager->persist($product);
+        $this->manager->flush();
+    }
+
+    /**
+     * @param RowMessage $row
+     *
+     * @return Product
+     */
+    private function getProduct(RowMessage $row): Product
+    {
+        $product = $this->repository->findOneBy(['code' => $row->getCode()]);
+        if (!$product) {
+            $product = new Product();
+            $product->setCode($row->getCode());
+        }
+
+        $product->setCost($row->getCost());
+        $product->setName($row->getName());
+        $product->setDescription($row->getDescription());
+        $product->setStock($row->getStock());
+        $product->setDiscontinued($row->isDiscontinued());
+
+        return $product;
     }
 }
