@@ -41,6 +41,6 @@ RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar && chmod +x 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin
 
 RUN curl -sS https://get.symfony.com/cli/installer | bash
-RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony && chmod a+x /usr/local/bin/symfony
 
 WORKDIR /app

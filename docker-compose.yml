@@ -23,6 +23,8 @@ services:
       - rabbitmq
     links:
       - "rabbitmq:rabbitmq"
+    ports:
+      - "443:8000"
 
   rabbitmq:
     container_name: rabbitmq

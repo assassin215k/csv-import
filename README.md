@@ -8,6 +8,9 @@ Tested only on linux systems
 #### To run:
 * use command make: ```make install``` to build containers, created and migrate DB
 * to import use command ```make run file="./.info/stock.csv"```
+or ```docker-compose exec php bin/console app:csv-import ./.info/stock.csv```
+* run consumer ```make worker-run``` or ```docker-compose exec php symfony console messenger:consume amqp_row_proceed --memory-limit=128MB --time-limit=3600``` to use output colors
+* stop all consumers ```make worker-stop``` or ```docker-compose exec php bin/console messenger:stop-workers``` to use output colors
 
 ### Code standard
 Use ```make check``` to run phpunit, psalm, php-cs-fixer, lint-yaml and composer-validate

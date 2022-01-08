@@ -1,7 +1,8 @@
 DOCKER_COMPOSE = docker-compose
 EXEC_PHP       = $(DOCKER_COMPOSE) exec -T php
 EXEC_MYSQL     = $(DOCKER_COMPOSE) exec -T mysql
-SYMFONY        = $(EXEC_PHP) bin/console
+CONSOLE        = $(EXEC_PHP) bin/console
+SYMFONY        = $(EXEC_PHP) symfony
 COMPOSER       = $(EXEC_PHP) composer
 ENV            = local
 # Set environment
@@ -20,15 +21,18 @@ endif
 ## ------
 
 install: build db ## Setup and start the project
+	$(CONSOLE) server:ca:install
 
-up: ## start dockers
+start: ## start dockers
 	$(DOCKER_COMPOSE) up --detach
+up: start ## start dockers
 
 build: ## Build and start dockers
 	$(DOCKER_COMPOSE) up --build --remove-orphans --force-recreate --detach
 
 stop: ## Stop dockers
 	$(DOCKER_COMPOSE) stop
+down: stop ## Stop dockers
 
 kill: # Remove dockers
 	$(DOCKER_COMPOSE) kill
@@ -39,13 +43,13 @@ clean: kill ## Stop the project and remove dockers and vendors
 reinstall: vendor-remove clean install precommit ## Just reinstall from scratch
 
 vendor-remove: ## Install vendors
-	$(EXEC_PHP) rm -rf var vendor
+	rm -rf var vendor
 
 vendor: composer.json composer.lock ## Install vendors
 	$(COMPOSER) install
 	$(EXEC_PHP) ./vendor/bin/simple-phpunit install
 
-.PHONY: install start stop kill clean reinstall
+.PHONY: install build start up stop down kill clean reinstall vendor vendor-remove
 
 ##
 ## Domains
@@ -63,15 +67,21 @@ add-hosts: ## Add domains into /etc/hosts
 
 db: vendor ## Prepare DB and run migrations
 	$(EXEC_MYSQL) mysql --password=pass < database.sql
-	$(SYMFONY) doctrine:migration:migrate --no-interaction
-
-.PHONY: db
+	$(CONSOLE) doctrine:migration:migrate --no-interaction
 
 run: ## Run csv import command. Use 'make run file=<filepath>'
-	$(SYMFONY) app:csv-import $(file)
+	$(CONSOLE) app:csv-import $(file)
 
-.PHONY: run
+server: ## Run symfony server
+	$(SYMFONY) serve
 
+worker-run: ## Run consumer
+	$(CONSOLE) messenger:consume amqp_row_proceed --memory-limit=128MB --time-limit=3600
+
+worker-stop: ## Stop all consumers
+	$(CONSOLE) messenger:stop-workers
+
+.PHONY: db run server worker-run worker-stop
 ##
 ## Code quality control
 ## ----------------------
@@ -82,7 +92,7 @@ phpunit: ## Run PHPUnit test (https://phpunit.de/)
 	$(EXEC_PHP) ./vendor/bin/simple-phpunit tests/ --coverage-html xHTML
 
 lint-yaml: ## Check YAML files by Symfony YAML linter (https://symfony.com/doc/current/components/yaml.html#syntax-validation)
-	$(SYMFONY) lint:yaml config --parse-tags
+	$(CONSOLE) lint:yaml config --parse-tags
 
 php-cs-fixer: ## Check PHP code style by PHP CS Fixer (https://github.com/FriendsOfPHP/PHP-CS-Fixer)
 	$(EXEC_PHP) ./vendor/bin/php-cs-fixer fix --allow-risky=yes --dry-run --diff --verbose

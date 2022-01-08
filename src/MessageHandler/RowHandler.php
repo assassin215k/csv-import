@@ -30,6 +30,11 @@ class RowHandler implements MessageHandlerInterface
     {
     }
 
+    /**
+     * @param RowMessage $row
+     *
+     * @return void
+     */
     public function __invoke(RowMessage $row)
     {
         $product = $this->getProduct($row);

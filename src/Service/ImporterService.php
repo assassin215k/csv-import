@@ -53,10 +53,6 @@ class ImporterService
             $records = $this->reader->read(++$page);
         }
 
-        if (!empty($envelope)) {
-//            var_dump($envelope->all(HandledStamp::class));
-        }
-
         return $response;
     }
 }
