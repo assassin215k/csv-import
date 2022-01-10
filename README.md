@@ -11,6 +11,7 @@ Tested only on linux systems
 or ```docker-compose exec php bin/console app:csv-import ./.info/stock.csv```
 * run consumer ```make worker-run``` or ```docker-compose exec php symfony console messenger:consume amqp_row_proceed --memory-limit=128MB --time-limit=3600``` to use output colors
 * stop all consumers ```make worker-stop``` or ```docker-compose exec php bin/console messenger:stop-workers``` to use output colors
+* to open queue inspector open ```http://localhost:15672/#/queues``` after docker is started
 
 ### Code standard
 Use ```make check``` to run phpunit, psalm, php-cs-fixer, lint-yaml and composer-validate

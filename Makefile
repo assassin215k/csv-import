@@ -69,11 +69,14 @@ db: vendor ## Prepare DB and run migrations
 	$(EXEC_MYSQL) mysql --password=pass < database.sql
 	$(CONSOLE) doctrine:migration:migrate --no-interaction
 
-run: ## Run csv import command. Use 'make run file=<filepath>'
+run: ## Run the csv import command. Use 'make run file=<filepath>'
 	$(CONSOLE) app:csv-import $(file)
 
-server: ## Run symfony server
-	$(SYMFONY) serve
+server:start: ## Run a local symfony server
+	$(SYMFONY) server:start
+
+server:stop: ## Stop a local symfony server
+	$(SYMFONY) server:stop
 
 worker-run: ## Run consumer
 	$(CONSOLE) messenger:consume amqp_row_proceed --memory-limit=128MB --time-limit=3600
