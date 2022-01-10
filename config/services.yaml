@@ -6,6 +6,7 @@
 parameters:
     reader.limit: '%env(CSV_READER_LIMIT)%'
     worker.reader.count: '%env(WORKER_READER_COUNT)%'
+    redis.reader.count: '%env(WORKER_READER_COUNT)%'
 
 services:
     # default configuration for services in *this* file
@@ -28,4 +29,6 @@ services:
         arguments:
             $limit: '%reader.limit%'
 
-    App\Service\ReportService\IReportService: '@App\Service\ReportService\ReportService'
+    App\Service\ReportService:
+        arguments:
+            $url: '%env(REDIS_URL)%'

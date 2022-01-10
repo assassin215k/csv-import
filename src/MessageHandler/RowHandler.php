@@ -9,10 +9,8 @@
 namespace App\MessageHandler;
 
 use App\Entity\Product;
-use App\Exception\MissedReportException;
 use App\Message\RowMessage;
-use App\Misc\ImportResponse;
-use App\Service\ReportService\IReportService;
+use App\Service\ReportService;
 use App\Service\ValidatorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -27,45 +25,37 @@ class RowHandler implements MessageHandlerInterface
     /**
      * @param EntityManagerInterface $manager
      * @param ValidatorService       $validator
-     * @param IReportService         $reportService
      * @param LoggerInterface        $logger
+     * @param ReportService          $reportService
      */
-    public function __construct(private EntityManagerInterface $manager, private ValidatorService $validator, private readonly IReportService $reportService, private LoggerInterface $logger)
+    public function __construct(private EntityManagerInterface $manager, private ValidatorService $validator, private LoggerInterface $logger, private readonly ReportService $reportService)
     {
     }
 
     /**
-     * @throws MissedReportException
-     *
      * @param RowMessage $row
      *
      * @return void
      */
     public function __invoke(RowMessage $row)
     {
-        $report = $this->reportService->getReport($row->getReportKey());
+        $this->reportService->init($row->getReportKey());
+        $this->reportService->decreaseQueueLength();
 
-        if (!$report) {
-            throw new MissedReportException();
-        }
-
-        if ($report->isAdded($row->getCode())) {
-            $report->skipped++;
+        if ($this->reportService->hasCode($row->getCode())) {
+            $this->reportService->addSkipped();
 
             return;
         }
 
-        $this->createProduct($row, $report);
+        $this->createProduct($row);
     }
 
     /**
      * @param RowMessage     $row
-     * @param ImportResponse $report
      */
-    private function createProduct(RowMessage $row, ImportResponse $report): void
+    private function createProduct(RowMessage $row): void
     {
-        $report->inQueue--;
-
         $repository = $this->manager->getRepository(Product::class);
         $product = $repository->findOneBy(['code' => $row->getCode()]);
         if (!$product) {
@@ -79,10 +69,8 @@ class RowHandler implements MessageHandlerInterface
         $product->setStock($row->getStock());
         $product->setDiscontinued($row->isDiscontinued());
 
-        $report->getProgressBar()->advance();
-
         if (!$this->validator->isValidProduct($product)) {
-            $report->invalid++;
+            $this->reportService->addInvalid();
 
             throw new UnrecoverableMessageHandlingException();
         }
@@ -90,10 +78,13 @@ class RowHandler implements MessageHandlerInterface
         try {
             $this->manager->persist($product);
             $this->manager->flush();
+
+            $this->reportService->addSuccess();
+            $this->reportService->addCode($row->getCode());
         } catch (\Exception $e) {
+            $this->reportService->addInvalid();
+
             $this->logger->critical($e->getMessage());
         }
-
-        $report->addCode($row->getCode());
     }
 }

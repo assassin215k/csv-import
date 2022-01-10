@@ -8,13 +8,11 @@
 
 namespace App\Command;
 
-use App\Misc\ImportResponse;
 use App\Service\ImporterService;
-use App\Service\ReportService\IReportService;
+use App\Service\ReportService;
 use Exception;
 use League\Csv\InvalidArgument;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -32,11 +30,14 @@ class ImportCommand extends Command
 
     /**
      * @param ImporterService $service
-     * @param IReportService  $reportService
+     * @param ReportService   $reportService
      */
-    public function __construct(public ImporterService $service, private readonly IReportService $reportService)
+    public function __construct(public ImporterService $service, private readonly ReportService $reportService)
     {
         parent::__construct();
+
+        $this->reportKey = (new \DateTime())->getTimestamp();
+        $this->reportService->init($this->reportKey);
     }
 
     protected function configure(): void
@@ -57,23 +58,16 @@ class ImportCommand extends Command
     {
         $output->writeln("Command started \r\n");
 
-        $this->reportKey = (new \DateTime())->getTimestamp();
-        $this->reportService->createReport($this->reportKey);
-        $report = $this->reportService->getReport($this->reportKey);
-        $report->invalid = -500;
-
         try {
             $this->service->import($output, $this->reportKey, $input->getArgument('file'), $input->getOption('delimiter'));
 
-            $report = $this->reportService->getReport($this->reportKey);
-
-            $output->writeln($report);
+            $output->writeln($this->makeResponse());
 
             $output->writeln("Command successfully done!\r\n");
 
             return Command::SUCCESS;
         } catch (InvalidArgument $e) {
-            $output->writeln('Invalid delimiter specified!');
+            $output->writeln("Invalid delimiter specified!");
 
             return Command::INVALID;
         } catch (Exception $e) {
@@ -81,5 +75,31 @@ class ImportCommand extends Command
         }
 
         return Command::FAILURE;
+    }
+
+    private function makeResponse(): string
+    {
+
+        $response = "=====\r\n";
+        $success = $this->reportService->getSuccess();
+        $response .= "Added/Updated products: ".$success."\r\n";
+
+        $skipped = $this->reportService->getSkipped();
+        if ($skipped) {
+            $response .= "Skipped rows: $skipped \r\n";
+        }
+
+        $invalid = $this->reportService->getInvalid();
+        if ($invalid) {
+            $response .= "Invalid records: $invalid\r\n";
+        }
+
+        $response .= "\r\n";
+        $total = $success + $skipped + $invalid;
+        $response .= "Total records proceed: $total\r\n";
+
+        $response .= "=====\r\n";
+
+        return $response;
     }
 }
