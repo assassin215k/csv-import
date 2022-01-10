@@ -43,7 +43,4 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin
 RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sources.list.d/symfony-cli.list
 RUN apt update && apt install symfony-cli
 
-#RUN curl -sS https://get.symfony.com/cli/installer | bash
-#RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony && chmod a+x /usr/local/bin/symfony
-
 WORKDIR /app

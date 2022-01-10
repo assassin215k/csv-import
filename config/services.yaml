@@ -27,3 +27,5 @@ services:
     App\Service\CsvReader\LeagueReader:
         arguments:
             $limit: '%reader.limit%'
+
+    App\Service\ReportService\IReportService: '@App\Service\ReportService\ReportService'

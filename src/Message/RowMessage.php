@@ -23,9 +23,9 @@ class RowMessage
 
     /**
      * @param array $content
-     * @param int   $lineNumber
+     * @param int   $reportKey
      */
-    public function __construct(array $content, private readonly int $lineNumber)
+    public function __construct(array $content, private readonly int $reportKey)
     {
         $this->code = (string) $content[Row::CODE];
         $this->name = (string) $content[Row::NAME];
@@ -38,9 +38,9 @@ class RowMessage
     /**
      * @return int
      */
-    public function getLineNumber(): int
+    public function getReportKey(): int
     {
-        return $this->lineNumber;
+        return $this->reportKey;
     }
 
     /**

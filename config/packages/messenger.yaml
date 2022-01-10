@@ -3,7 +3,6 @@ framework:
     # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
     # failure_transport: failed
 
-    failure_transport: failed
     # https://symfony.com/doc/current/messenger.html#transport-configuration
     transports:
       amqp_row_proceed:
@@ -14,7 +13,8 @@ framework:
             type: fanout
           queues:
             row_queue: ~
-      failed: 'doctrine://default?queue_name=failed'
+        retry_strategy:
+          max_retries: 0
 
     routing:
       # Route your messages to the transports

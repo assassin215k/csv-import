@@ -21,7 +21,6 @@ endif
 ## ------
 
 install: build db ## Setup and start the project
-	$(CONSOLE) server:ca:install
 
 start: ## start dockers
 	$(DOCKER_COMPOSE) up --detach
@@ -40,10 +39,10 @@ kill: # Remove dockers
 
 clean: kill ## Stop the project and remove dockers and vendors
 
-reinstall: vendor-remove clean install precommit ## Just reinstall from scratch
+reinstall: vendor-remove clean install ## Just reinstall from scratch
 
 vendor-remove: ## Install vendors
-	rm -rf var vendor
+	$(EXEC_PHP) rm -rf var vendor
 
 vendor: composer.json composer.lock ## Install vendors
 	$(COMPOSER) install
@@ -72,10 +71,10 @@ db: vendor ## Prepare DB and run migrations
 run: ## Run the csv import command. Use 'make run file=<filepath>'
 	$(CONSOLE) app:csv-import $(file)
 
-server:start: ## Run a local symfony server
+server-start: ## Run a local symfony server
 	$(SYMFONY) server:start
 
-server:stop: ## Stop a local symfony server
+server-stop: ## Stop a local symfony server
 	$(SYMFONY) server:stop
 
 worker-run: ## Run consumer

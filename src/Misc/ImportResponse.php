@@ -8,35 +8,43 @@
 
 namespace App\Misc;
 
+use JetBrains\PhpStorm\Pure;
+use Symfony\Component\Console\Helper\ProgressBar;
+
 /**
  * ImportResponse.
  */
 class ImportResponse
 {
-    public int $successItems = 0;
+    public int $skipped = 0;
+    public int $invalid = 0;
+    public int $inQueue = 0;
 
-    public array $skippedString = [];
-    public array $invalidCode = [];
+    public array $alreadyAdded = [];
 
+    private ProgressBar $progressBar;
+
+    /**
+     * @return string
+     */
+    #[Pure]
     public function __toString(): string
     {
         $response = "=====\r\n";
-        $response .= "Success: $this->successItems\r\n";
+        $response .= "Report\r\n";
+        $response .= "\r\n";
+        $response .= "Added/Updated products: ".$this->success()."\r\n";
 
-        $skipped = count($this->skippedString);
-        if ($skipped) {
-            $response .= 'Skipped line numbers: ';
-            $response .= join(',', $this->skippedString)."\r\n";
+        if ($this->skipped) {
+            $response .= "Skipped rows: $this->skipped \r\n";
         }
 
-        $invalid = count($this->invalidCode);
-        if ($invalid) {
-            $response .= 'Invalid codes: ';
-            $response .= join(',', $this->invalidCode)."\r\n";
+        if ($this->invalid) {
+            $response .= "Invalid records: $this->invalid\r\n";
         }
 
-        $response .= "=====\r\n";
-        $total = $this->successItems + $skipped + $invalid;
+        $response .= "\r\n";
+        $total = $this->success() + $this->skipped + $this->invalid;
         $response .= "Total records proceed: $total\r\n";
 
         $response .= "=====\r\n";
@@ -44,8 +52,30 @@ class ImportResponse
         return $response;
     }
 
-    public function total(): int
+    public function isAdded(string $code): bool
     {
-        return $this->successItems + count($this->invalidCode) + count($this->skippedString);
+        return array_key_exists($code, $this->alreadyAdded);
+    }
+
+    public function addCode(string $code): void
+    {
+        if (array_key_exists($code, $this->alreadyAdded)) {
+            return;
+        }
+
+        $this->alreadyAdded[$code] = '';
+    }
+
+    public function setProgressBar(ProgressBar $progressBar):void {
+        $this->progressBar = $progressBar;
+    }
+
+    public function getProgressBar():ProgressBar {
+        return $this->progressBar;
+    }
+
+    private function success(): int
+    {
+        return count($this->alreadyAdded);
     }
 }
