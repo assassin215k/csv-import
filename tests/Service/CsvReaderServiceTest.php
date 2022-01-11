@@ -12,7 +12,7 @@ use App\Exception\EmptyFileException;
 use App\Exception\MissedFileException;
 use App\Exception\ReadNotInitializedException;
 use App\Exception\WrongCsvHeadersException;
-use App\Service\CsvReader\CsvReaderService;
+use App\Service\CsvReader\LeagueReader;
 use League\Csv\Exception;
 use League\Csv\InvalidArgument;
 use PHPUnit\Framework\TestCase;
@@ -33,7 +33,7 @@ class CsvReaderServiceTest extends TestCase
      */
     public function testInit()
     {
-        $service = new CsvReaderService();
+        $service = new LeagueReader(1000);
 
         $this->assertGreaterThan(0, $service->init('.info/stock.csv', ','));
     }
@@ -46,7 +46,7 @@ class CsvReaderServiceTest extends TestCase
      */
     public function testNotInit()
     {
-        $service = new CsvReaderService();
+        $service = new LeagueReader(1000);
 
         $this->expectException(ReadNotInitializedException::class);
         $service->read(10, 0);
@@ -64,7 +64,7 @@ class CsvReaderServiceTest extends TestCase
      */
     public function testRead()
     {
-        $service = new CsvReaderService();
+        $service = new LeagueReader(1000);
         $service->init('.info/stock.csv', ',');
         $result = $service->read(10);
 
@@ -82,7 +82,7 @@ class CsvReaderServiceTest extends TestCase
      */
     public function testDelimiter()
     {
-        $service = new CsvReaderService();
+        $service = new LeagueReader(1000);
 
         $count = $service->init('./tests/csvForTests/delimiter.csv', '|');
 
@@ -100,7 +100,7 @@ class CsvReaderServiceTest extends TestCase
      */
     public function testQuotes()
     {
-        $service = new CsvReaderService();
+        $service = new LeagueReader(1000);
 
         $count = $service->init('./tests/csvForTests/quotes.csv', ',');
 
@@ -117,7 +117,7 @@ class CsvReaderServiceTest extends TestCase
      */
     public function testWrongHeaders()
     {
-        $service = new CsvReaderService();
+        $service = new LeagueReader(1000);
 
         $this->expectException(WrongCsvHeadersException::class);
 
@@ -135,7 +135,7 @@ class CsvReaderServiceTest extends TestCase
      */
     public function testMissedFile()
     {
-        $service = new CsvReaderService();
+        $service = new LeagueReader(1000);
 
         $this->expectException(MissedFileException::class);
 
@@ -153,7 +153,7 @@ class CsvReaderServiceTest extends TestCase
      */
     public function testEmptyFile()
     {
-        $service = new CsvReaderService();
+        $service = new LeagueReader(1000);
 
         $this->expectException(EmptyFileException::class);
 
@@ -171,7 +171,7 @@ class CsvReaderServiceTest extends TestCase
      */
     public function testMissedHeaders()
     {
-        $service = new CsvReaderService();
+        $service = new LeagueReader(1000);
 
         $this->expectException(WrongCsvHeadersException::class);
 

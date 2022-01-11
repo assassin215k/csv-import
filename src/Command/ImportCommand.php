@@ -9,6 +9,7 @@
 namespace App\Command;
 
 use App\Service\ImporterService;
+use App\Service\Output\IOutputService;
 use App\Service\ReportService;
 use Exception;
 use League\Csv\InvalidArgument;
@@ -31,8 +32,9 @@ class ImportCommand extends Command
     /**
      * @param ImporterService $service
      * @param ReportService   $reportService
+     * @param IOutputService  $outputService
      */
-    public function __construct(public ImporterService $service, private readonly ReportService $reportService)
+    public function __construct(public ImporterService $service, private readonly ReportService $reportService, private readonly IOutputService $outputService)
     {
         parent::__construct();
 
@@ -58,8 +60,10 @@ class ImportCommand extends Command
     {
         $output->writeln("Command started \r\n");
 
+        $this->outputService->set($output);
+
         try {
-            $this->service->import($output, $this->reportKey, $input->getArgument('file'), $input->getOption('delimiter'));
+            $this->service->import($this->reportKey, $input->getArgument('file'), $input->getOption('delimiter'));
 
             $output->writeln($this->makeResponse());
 

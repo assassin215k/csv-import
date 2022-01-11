@@ -10,9 +10,9 @@ namespace App\Service;
 
 use App\Message\RowMessage;
 use App\Service\CsvReader\IReader;
+use App\Service\Output\IOutputService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -27,20 +27,22 @@ class ImporterService
      * @param MessageBusInterface $bus
      * @param LoggerInterface     $logger
      * @param ReportService       $reportService
+     * @param IOutputService      $outputService
      */
-    public function __construct(private IReader $reader, private MessageBusInterface $bus, private LoggerInterface $logger, private readonly ReportService $reportService)
+    public function __construct(private IReader $reader, private MessageBusInterface $bus, private LoggerInterface $logger, private readonly ReportService $reportService, private readonly IOutputService $outputService)
     {
         self::$start = microtime(true);
     }
 
     /**
-     * @param OutputInterface $output
      * @param int             $reportKey
      * @param string          $fileName
      * @param string          $delimiter
      */
-    public function import(OutputInterface $output, int $reportKey, string $fileName, string $delimiter = ','): void
+    public function import(int $reportKey, string $fileName, string $delimiter = ','): void
     {
+        $output = $this->outputService->get();
+
         $this->reportService->init($reportKey);
 
         $total = $this->reader->init($fileName, $delimiter);
@@ -51,7 +53,8 @@ class ImporterService
 
         $output->writeln(self::getTime().'Read rows:');
 
-        $progressBar = new ProgressBar($output, $total);
+        $progressBar = $this->outputService->getProgressBar();
+        $progressBar->setMaxSteps($total);
         $progressBar->start();
 
         while ($records->valid()) {
@@ -70,7 +73,8 @@ class ImporterService
 
         if ($this->reportService->getQueueLength()) {
             $output->writeln(self::getTime()."Wait to proceed all items is queue...\r\n");
-            $progressBar = new ProgressBar($output, $total);
+            $progressBar = $this->outputService->getProgressBar();
+            $progressBar->setMaxSteps($total);
             $progressBar->start();
 
             $step = 0;
